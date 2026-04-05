@@ -14,9 +14,13 @@ import {
 import {
     DashboardModal
 } from "@/app/[locale]/(dashboard)/_components/common/Modal";
+import {
+    DashboardHeader
+} from "@/app/[locale]/(dashboard)/_components/common/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import { Edit2, Eye, RefreshCw, ShoppingBag, User as UserIcon, Calendar, CheckCircle2, Clock, Truck, XCircle, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import UpdateStatus from "./UpdateStatus";
@@ -118,39 +122,46 @@ export default function OrderList() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center justify-between">
-                    <DashboardSearch
-                        placeholder={t("SearchOrderID")}
-                        onChange={(val) => { setSearch(val); setPage(1); }}
-                        className="w-full md:w-[28rem]"
-                    />
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-between md:justify-end w-full md:w-auto">
-                        <DashboardSelectFilter
-                            value={statusFilter}
-                            onChange={(val) => { setStatusFilter(val); setPage(1); }}
-                            options={[
-                                { label: t("All"), value: "all" },
-                                { label: t("Pending"), value: "pending" },
-                                { label: t("Processing"), value: "processing" },
-                                { label: t("Shipped"), value: "shipped" },
-                                { label: t("Delivered"), value: "delivered" },
-                                { label: t("Canceled"), value: "canceled" },
-                            ]}
-                            placeholder={t("Filter")}
-                        />
-                        <Button variant="outline" size="icon" onClick={fetchOrders} className="h-8 w-8 md:h-9 md:w-9 rounded-full border-border/60 hover:border-foreground/30">
-                            <RefreshCw className={loading ? "animate-spin" : ""} />
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+            <DashboardHeader
+                title={t("Orders")}
+                description={t("OrdersPageDescription")}
+                actions={
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={fetchOrders}
+                            className="h-12 w-12 rounded-2xl border-border/40 bg-background/40 hover:bg-background/60 transition-all duration-300 shadow-sm shrink-0"
+                        >
+                            <RefreshCw className={cn("h-5 w-5 text-muted-foreground", loading && "animate-spin")} />
                         </Button>
                     </div>
+                }
+            >
+                <DashboardSearch
+                    placeholder={t("SearchOrderID")}
+                    onChange={(val) => { setSearch(val); setPage(1); }}
+                    className="w-full lg:w-[32rem]"
+                />
+
+                <div className="flex flex-wrap items-center gap-3 justify-end flex-1">
+                    <DashboardSelectFilter
+                        value={statusFilter}
+                        onChange={(val) => { setStatusFilter(val); setPage(1); }}
+                        options={[
+                            { label: t("All"), value: "all" },
+                            { label: t("Pending"), value: "pending" },
+                            { label: t("Processing"), value: "processing" },
+                            { label: t("Shipped"), value: "shipped" },
+                            { label: t("Delivered"), value: "delivered" },
+                            { label: t("Canceled"), value: "canceled" },
+                        ]}
+                        placeholder={t("Filter")}
+                        className="w-full sm:w-[180px]"
+                    />
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">
-                        {totalCount} {t("results")}
-                    </span>
-                </div>
-            </div>
+            </DashboardHeader>
 
             <DashboardTable headers={[
                 t("OrderID"),
