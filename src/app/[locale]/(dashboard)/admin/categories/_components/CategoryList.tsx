@@ -153,7 +153,11 @@ export default function CategoryList() {
                 t("Slug"),
                 t("CreatedAt"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "hidden sm:table-cell", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoCategoriesFound") || "No categories found."}
+            >
                 {categories.map((category) => (
                     <DashboardTableRow key={category.id}>
                         <DashboardTableCell>
@@ -170,12 +174,12 @@ export default function CategoryList() {
                         <DashboardTableCell>
                             <span className="font-semibold tracking-tight text-sm">{isAr ? category.name_ar : category.name_en}</span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <span className="text-[10px] uppercase font-medium text-muted-foreground bg-foreground/[0.05] px-3 py-1 rounded-full border border-border/60">
                                 {isAr ? category.slug_ar : category.slug_en}
                             </span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <span className="text-xs text-muted-foreground font-medium">
                                 {new Date(category.created_at).toLocaleDateString(locale)}
                             </span>
@@ -199,6 +203,8 @@ export default function CategoryList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal

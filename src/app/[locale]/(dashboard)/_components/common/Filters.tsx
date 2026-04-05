@@ -28,7 +28,7 @@ export function DashboardSearch({ placeholder, onChange, className }: SearchBoxP
         type="text"
         placeholder={placeholder || "Search items..."}
         onChange={(e) => onChange?.(e.target.value)}
-        className="block h-12 w-full rounded-2xl bg-background/40 backdrop-blur-xl border border-border/40 focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all duration-300 outline-none pl-11 pr-4 text-sm font-medium shadow-sm hover:bg-background/60"
+        className="block h-12 w-full rounded-sm bg-background/40 backdrop-blur-xl border border-border/40 focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all duration-300 outline-none pl-11 pr-4 text-sm font-medium shadow-sm hover:bg-background/60"
       />
     </div>
   );
@@ -48,7 +48,7 @@ export function DashboardFilter({ options, onSelect, selectedValue }: { options:
             key={opt.value}
             onClick={() => onSelect(opt.value)}
             className={cn(
-              "px-5 py-2.5 rounded-2xl text-xs font-semibold whitespace-nowrap border transition-all duration-300 shrink-0",
+              "px-5 py-2.5 cursor-pointer rounded-2xl text-xs font-semibold whitespace-nowrap border transition-all duration-300 shrink-0",
               selectedValue === opt.value
                 ? "bg-foreground text-background border-transparent shadow-lg shadow-foreground/10 translate-y-[-1px]"
                 : "bg-background/20 border-border/40 text-muted-foreground hover:border-foreground/20 hover:bg-background/60 hover:text-foreground"
@@ -62,28 +62,93 @@ export function DashboardFilter({ options, onSelect, selectedValue }: { options:
   );
 }
 
-export function DashboardPagination({ page, totalPages, onPrev, onNext }: { page: number, totalPages: number, onPrev: () => void, onNext: () => void }) {
+export function DashboardPagination({
+  page,
+  totalPages,
+  onPrev,
+  onNext,
+  totalCount,
+  onPageSelect,
+}: {
+  page: number;
+  totalPages: number;
+  onPrev: () => void;
+  onNext: () => void;
+  totalCount?: number;
+  onPageSelect?: (p: number) => void;
+}) {
+  const makePages = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
+    const maxButtons = 5;
+    if (totalPages <= maxButtons) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
+    }
+    const add = (p: number | string) => pages.push(p);
+    add(1);
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+    if (start > 2) add("…");
+    for (let i = start; i <= end; i++) add(i);
+    if (end < totalPages - 1) add("…");
+    add(totalPages);
+    return pages;
+  };
+
+  const pageSize = 10;
+  const from = (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, totalCount || page * pageSize);
+
   return (
-    <div className="flex items-center justify-between mt-10 p-5 bg-background/30 backdrop-blur-2xl border border-border/30 rounded-[2rem] shadow-xl shadow-black/[0.02]">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-10 p-5 bg-background/30 backdrop-blur-2xl border border-border/30 rounded-[2rem] shadow-xl shadow-black/[0.02]">
       <div className="flex flex-col gap-0.5">
         <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground/60">Pagination</p>
-        <p className="text-sm font-medium">Page <span className="text-foreground font-extrabold">{page}</span> <span className="mx-1 opacity-30">/</span> <span className="text-muted-foreground">{totalPages}</span></p>
+        {totalCount ? (
+          <p className="text-sm font-medium">
+            Showing <span className="text-foreground font-extrabold">{Math.min(from, totalCount)}</span>
+            <span className="mx-1 opacity-30">–</span>
+            <span className="text-foreground font-extrabold">{to}</span>
+            <span className="mx-2 opacity-30">of</span>
+            <span className="text-muted-foreground">{totalCount}</span>
+          </p>
+        ) : (
+          <p className="text-sm font-medium">
+            Page <span className="text-foreground font-extrabold">{page}</span>
+            <span className="mx-1 opacity-30">/</span>
+            <span className="text-muted-foreground">{totalPages}</span>
+          </p>
+        )}
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar">
         <Button
           variant="outline"
           onClick={onPrev}
           disabled={page <= 1}
-          className="h-11 w-11 p-0 rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm"
+          className="h-11 w-11 p-0 rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm shrink-0"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
+        {makePages().map((p, idx) => (
+          <Button
+            key={`${p}-${idx}`}
+            variant={p === page ? "default" : "outline"}
+            size="sm"
+            onClick={() => typeof p === "number" && onPageSelect?.(p)}
+            disabled={typeof p !== "number"}
+            className={cn(
+              "h-10 min-w-10 px-3 cursor-pointer rounded-2xl shrink-0",
+              p === page ? "bg-foreground text-background hover:bg-foreground/90" : "border-border/40 bg-background/40 hover:border-foreground/20 hover:bg-background/60"
+            )}
+          >
+            {p}
+          </Button>
+        ))}
         <Button
           variant="outline"
           onClick={onNext}
           disabled={page >= totalPages}
-          className="h-11 w-11 p-0 rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm"
+          className="h-11 w-11 p-0 cursor-pointer rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm shrink-0"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>

@@ -18,18 +18,19 @@ interface DashboardTableProps {
   className?: string;
   isLoading?: boolean;
   emptyMessage?: string;
+  headerClasses?: string[];
 }
 
-export function DashboardTable({ headers, children, className, isLoading, emptyMessage }: DashboardTableProps) {
+export function DashboardTable({ headers, children, className, isLoading, emptyMessage, headerClasses = [] }: DashboardTableProps) {
   const hasRows = React.Children.count(children) > 0;
   return (
     <div className={cn("rounded-2xl sm:rounded-[2.5rem] border border-border/40 bg-background/20 backdrop-blur-2xl overflow-hidden shadow-2xl shadow-black/[0.02]", className)}>
       <div className="w-full overflow-x-auto no-scrollbar">
         <Table className="min-w-[700px] lg:min-w-0 table-fixed sm:table-auto">
-          <TableHeader className="bg-foreground/[0.02]">
+          <TableHeader className="bg-foreground/[0.02] sticky top-0 z-10">
             <TableRow className="hover:bg-transparent border-border/40 h-14 sm:h-16">
               {headers.map((header, index) => (
-                <TableHead key={index} className="text-[10px] ltr:text-left rtl:text-right uppercase font-[800] tracking-widest text-muted-foreground/50 px-4 sm:px-6">
+                <TableHead key={index} className={cn("text-[10px] ltr:text-left rtl:text-right uppercase font-[800] tracking-widest text-muted-foreground/50 px-4 sm:px-6", headerClasses[index])}>
                   {header}
                 </TableHead>
               ))}
@@ -41,8 +42,8 @@ export function DashboardTable({ headers, children, className, isLoading, emptyM
                 <TableCell colSpan={headers.length}>
                   <div className="flex flex-col items-center justify-center py-20 sm:py-32 text-muted-foreground gap-4">
                     <div className="relative">
-                       <Loader2 className="h-10 w-10 animate-spin text-primary/40" />
-                       <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
+                      <Loader2 className="h-10 w-10 animate-spin text-primary/40" />
+                      <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
                     </div>
                     <span className="text-[11px] font-black tracking-[0.2em] uppercase opacity-40">Processing Transaction Cycle...</span>
                   </div>
@@ -74,7 +75,7 @@ export function DashboardTable({ headers, children, className, isLoading, emptyM
 
 export function DashboardTableRow({ children, className }: { children: React.ReactNode, className?: string }) {
   return (
-    <TableRow className={cn("border-border/10 hover:bg-foreground/[0.03] transition-all duration-300 group h-16 sm:h-20", className)}>
+    <TableRow className={cn("border-border/10 hover:bg-foreground/[0.03] odd:bg-foreground/[0.01] transition-all duration-300 group h-16 sm:h-20", className)}>
       {children}
     </TableRow>
   );

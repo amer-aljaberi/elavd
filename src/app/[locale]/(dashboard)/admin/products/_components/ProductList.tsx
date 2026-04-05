@@ -162,7 +162,11 @@ export default function ProductList() {
                 t("Price"),
                 t("Status"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "hidden md:table-cell", "", "hidden sm:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoProductsFound") || "No products found."}
+            >
                 {products.map((product) => (
                     <DashboardTableRow key={product.id}>
                         <DashboardTableCell>
@@ -184,7 +188,7 @@ export default function ProductList() {
                                 </span>
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <span className="text-xs font-semibold px-3 py-1 bg-background/60 border border-border/60 rounded-full text-foreground/80">
                                 {isAr ? product.categories?.name_ar : product.categories?.name_en || "-"}
                             </span>
@@ -195,7 +199,7 @@ export default function ProductList() {
                                 {product.discount_price > 0 && <span className="text-[11px] text-muted-foreground line-through decoration-2">${product.discount_price}</span>}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <div className="flex items-center gap-3">
                                 <div className={`h-2.5 w-2.5 rounded-full ${product.is_active ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                                 {product.is_featured && <Star className="h-4 w-4 text-amber-500 fill-amber-500" />}
@@ -220,6 +224,8 @@ export default function ProductList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             {/* Edit/Create Modal */}

@@ -167,7 +167,11 @@ export default function OfferList() {
                 t("Timeline"),
                 t("Status"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "hidden sm:table-cell", "hidden md:table-cell", "hidden sm:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoOffersFound") || "No offers found."}
+            >
                 {offers.map((offer) => (
                     <DashboardTableRow key={offer.id}>
                         <DashboardTableCell>
@@ -187,12 +191,12 @@ export default function OfferList() {
                                 {offer.position > 0 && <span className="text-[10px] text-muted-foreground">{t("Pos")}: {offer.position}</span>}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <span className="text-[10px] uppercase font-medium text-primary bg-primary/5 px-2 py-0.5 rounded-full">
                                 {offer.type}
                             </span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
                                 <Calendar className="h-3 w-3" />
                                 <span>{offer.start_date ? new Date(offer.start_date).toLocaleDateString(locale) : "-"}</span>
@@ -200,7 +204,7 @@ export default function OfferList() {
                                 <span>{offer.end_date ? new Date(offer.end_date).toLocaleDateString(locale) : "-"}</span>
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <div className={`h-2.5 w-2.5 rounded-full ${offer.is_active ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                         </DashboardTableCell>
                         <DashboardTableCell>
@@ -222,6 +226,8 @@ export default function OfferList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal

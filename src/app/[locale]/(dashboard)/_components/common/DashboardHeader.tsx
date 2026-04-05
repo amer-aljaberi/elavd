@@ -8,7 +8,7 @@ interface DashboardHeaderProps {
   title: string;
   description?: string;
   actions?: ReactNode;
-  children?: ReactNode; 
+  children?: ReactNode;
   className?: string;
 }
 
@@ -47,10 +47,10 @@ export function DashboardHeader({
       {/* Filter and Search Bar */}
       {children && (
         <div className="w-full">
-          <div className="relative p-1.5 sm:p-2 rounded-3xl sm:rounded-[2.5rem] bg-background/30 backdrop-blur-3xl border border-border/40 shadow-2xl shadow-black/[0.03]">
-             <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2 sm:gap-3">
-                {children}
-             </div>
+          <div className="relative p-1.5 sm:p-2 rounded-sm bg-background/30 backdrop-blur-3xl border border-border/40 shadow-2xl shadow-black/[0.03]">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2 sm:gap-3">
+              {children}
+            </div>
           </div>
         </div>
       )}

@@ -48,7 +48,7 @@ export default function Header() {
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleSidebar}
-                className="text-foreground hover:bg-primary/10"
+                className="text-foreground hover:bg-primary/10 hover:text-primary"
             >
                 {isSidebarOpen ? (
                     <X className="h-5 w-5 sm:h-6 sm:w-6" />

@@ -204,14 +204,14 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 gap-8">
                         {[
                             { label: t("ShortDescEn"), name: "short_desc_en", h: "h-24" },
                             { label: t("ShortDescAr"), name: "short_desc_ar", h: "h-24" },
                             { label: t("FullDescEn"), name: "full_desc_en", h: "h-40", span: true },
                             { label: t("FullDescAr"), name: "full_desc_ar", h: "h-40", span: true }
                         ].map((area) => (
-                            <div key={area.name} className={`space-y-2 ${area.span ? 'md:col-span-2' : ''}`}>
+                            <div key={area.name} className={`space-y-2 w-full ${area.span ? 'md:col-span-1' : ''}`}>
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
                                     {area.label}
                                 </Label>

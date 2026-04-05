@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { RefreshCcw, Edit2, Shield, User as UserIcon, Mail, Lock, User as NameIcon } from "lucide-react";
-import { 
-  DashboardTable, 
-  DashboardTableRow, 
-  DashboardTableCell 
+import {
+    DashboardTable,
+    DashboardTableRow,
+    DashboardTableCell
 } from "@/app/[locale]/(dashboard)/_components/common/Table";
 import { DashboardModal } from "@/app/[locale]/(dashboard)/_components/common/Modal";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export default function UserList() {
     const onUpdate = async (data: any) => {
         if (!editUser) return;
         setUpdating(true);
-        
+
         // Only include password if it's not empty
         const updates: any = {
             email: data.email,
@@ -113,32 +113,36 @@ export default function UserList() {
                 </Button>
             </div>
 
-            <DashboardTable headers={headers}>
+            <DashboardTable
+                headers={headers}
+                headerClasses={["", "hidden sm:table-cell", "", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={tDashboard("NoUsersFound") || "No users found."}
+            >
                 {users.map((user) => (
                     <DashboardTableRow key={user.id}>
                         <DashboardTableCell className="font-bold">
                             {user.email}
                         </DashboardTableCell>
-                        <DashboardTableCell className="text-muted-foreground">
+                        <DashboardTableCell className="text-muted-foreground hidden sm:table-cell">
                             {user.name || '-'}
                         </DashboardTableCell>
                         <DashboardTableCell>
-                            <div className={`px-2 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 ${
-                                user.role === 'admin' 
-                                ? 'bg-primary/10 text-primary' 
+                            <div className={`px-2 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 ${user.role === 'admin'
+                                ? 'bg-primary/10 text-primary'
                                 : 'bg-muted text-muted-foreground'
-                            }`}>
+                                }`}>
                                 {user.role === 'admin' ? <Shield className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
                                 {user.role === 'admin' ? tDashboard("Admin") : tDashboard("User")}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell className="text-xs text-muted-foreground font-medium">
+                        <DashboardTableCell className="text-xs text-muted-foreground font-medium hidden md:table-cell">
                             {user.created_at ? format(new Date(user.created_at), 'MMM dd, yyyy') : '-'}
                         </DashboardTableCell>
                         <DashboardTableCell>
-                            <Button 
-                                variant="ghost" 
-                                size="sm" 
+                            <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => setEditUser(user)}
                                 className="h-8 w-8 p-0 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
                             >
@@ -150,9 +154,9 @@ export default function UserList() {
             </DashboardTable>
 
             {/* Edit Modal */}
-            <DashboardModal 
-                isOpen={!!editUser} 
-                onClose={() => setEditUser(null)} 
+            <DashboardModal
+                isOpen={!!editUser}
+                onClose={() => setEditUser(null)}
                 title={tDashboard("EditUser")}
                 description={editUser?.email}
             >
@@ -162,7 +166,7 @@ export default function UserList() {
                             <NameIcon className="h-3 w-3" />
                             {tDashboard("Name")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("name")}
                             placeholder={tDashboard("UserNamePlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
@@ -174,7 +178,7 @@ export default function UserList() {
                             <Mail className="h-3 w-3" />
                             {tDashboard("Email")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("email")}
                             type="email"
                             placeholder={tDashboard("EmailPlaceholder")}
@@ -187,7 +191,7 @@ export default function UserList() {
                             <Lock className="h-3 w-3" />
                             {tDashboard("Password")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("password")}
                             type="password"
                             placeholder={tDashboard("PasswordPlaceholder")}
@@ -208,4 +212,4 @@ export default function UserList() {
             </DashboardModal>
         </div>
     );
-}
+}

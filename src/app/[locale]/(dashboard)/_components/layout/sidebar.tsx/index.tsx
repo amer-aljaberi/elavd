@@ -17,7 +17,9 @@ import {
     ChevronRight,
     LogOut,
     Loader2,
-    X
+    X,
+    ArrowLeft,
+    ArrowRight
 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -79,23 +81,23 @@ export default function Sidebar() {
         <>
             {/* Mobile Overlay */}
             {isSidebarOpen && (
-                <div 
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] lg:hidden transition-opacity duration-300" 
+                <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             <aside className={cn(
-                "fixed lg:sticky top-0 h-screen bg-background border-e border-primary/5 flex flex-col transition-all duration-500 z-[1000]",
+                "fixed lg:sticky top-0 h-screen bg-background border-e border-primary/5 flex flex-col transition-all duration-500 z-40",
                 isSidebarOpen ? "w-72 translate-x-0" : "w-0 -translate-x-full lg:w-0 lg:translate-x-0 opacity-0 overflow-hidden",
                 isAr && !isSidebarOpen ? "translate-x-full" : ""
             )}>
                 <div className="p-8 flex items-center justify-between gap-3">
-                    <Image src={logo} alt="Logo" width={160} height={40} className="w-auto h-10 object-contain" />
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="lg:hidden" 
+                    <Image src={logo} alt="Logo" width={170} height={40} className="w-auto h-10 object-contain" />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="lg:hidden"
                         onClick={() => setSidebarOpen(false)}
                     >
                         <X className="h-5 w-5" />
@@ -138,10 +140,16 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-6 mt-auto">
-                    <Button 
-                        onClick={handleLogout} 
+                    <Button variant="link" asChild className="w-full h-12 mb-5 flex items-center gap-2 text-sm font-medium border-2 border-main rounded-2xl !text-black hover:text-primary transition-all duration-300">
+                        <Link href="/">
+                            <p>back to website</p>
+                            <ArrowRight className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                    <Button
+                        onClick={handleLogout}
                         disabled={isLoading}
-                        variant="outline" 
+                        variant="outline"
                         className="w-full h-12 hover:bg-rose-500 hover:text-white bg-rose-500/10 border-none text-rose-600 rounded-2xl font-bold transition-all duration-300 disabled:opacity-50"
                     >
                         {isLoading ? (

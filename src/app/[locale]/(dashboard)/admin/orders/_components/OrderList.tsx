@@ -170,7 +170,11 @@ export default function OrderList() {
                 t("Status"),
                 t("CreatedAt"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "", "hidden sm:table-cell", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoOrdersFound") || "No orders found."}
+            >
                 {orders.map((order) => (
                     <DashboardTableRow key={order.id}>
                         <DashboardTableCell>
@@ -189,13 +193,13 @@ export default function OrderList() {
                         <DashboardTableCell>
                             <span className="font-bold text-primary font-mono">${order.total_amount?.toFixed(2)}</span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <div className={`flex items-center gap-2 px-3 py-1 rounded-xl border border-dashed font-bold text-[10px] uppercase w-fit ${getStatusStyle(order.status)}`}>
                                 {getStatusIcon(order.status)}
                                 {t(order.status.charAt(0).toUpperCase() + order.status.slice(1))}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                                 <Calendar className="h-3 w-3 opacity-50" />
                                 {new Date(order.created_at).toLocaleDateString(locale)}
@@ -220,6 +224,8 @@ export default function OrderList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal
