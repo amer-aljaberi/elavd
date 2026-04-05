@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "LoginTitle": "مرحباً بعودتك",
+    "LoginSubtitle": "يرجى إدخال بياناتك للوصول إلى حسابك",
+    "EmailLabel": "البريد الإلكتروني",
+    "PasswordLabel": "كلمة المرور",
+    "EmailPlaceholder": "أدخل بريدك الإلكتروني",
+    "PasswordPlaceholder": "أدخل كلمة المرور",
+    "SignInButton": "تسجيل الدخول",
+    "LoggingIn": "جاري تسجيل الدخول...",
+    "EmailRequired": "البريد الإلكتروني مطلوب",
+    "PasswordRequired": "كلمة المرور مطلوبة",
+    "InvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+    "PasswordMinLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    "LoginError": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "ForgotPassword": "نسيت كلمة المرور؟",
+    "NoAccount": "ليس لديك حساب؟",
+    "SignUp": "إنشاء حساب",
+    "LoginSuccessTitle": "تم تسجيل الدخول بنجاح",
+    "LoginSuccessDesc": "مرحباً بك مرة أخرى في dneest!",
+    "UnexpectedError": "حدث خطأ غير متوقع"
+  }
+}

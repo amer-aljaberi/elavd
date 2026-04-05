@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "LoginTitle": "Welcome Back",
+    "LoginSubtitle": "Please enter your credentials to access your account",
+    "EmailLabel": "Email",
+    "PasswordLabel": "Password",
+    "EmailPlaceholder": "Enter your email",
+    "PasswordPlaceholder": "Enter your password",
+    "SignInButton": "Sign In",
+    "LoggingIn": "Logging in...",
+    "EmailRequired": "Email is required",
+    "PasswordRequired": "Password is required",
+    "InvalidEmail": "Please enter a valid email address",
+    "PasswordMinLength": "Password must be at least 6 characters long",
+    "LoginError": "Invalid email or password",
+    "ForgotPassword": "Forgot password?",
+    "NoAccount": "Don't have an account?",
+    "SignUp": "Sign Up",
+    "LoginSuccessTitle": "Login successful",
+    "LoginSuccessDesc": "Welcome back to dneest!",
+    "UnexpectedError": "An unexpected error occurred"
+  }
+}

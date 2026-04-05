@@ -1,0 +1,364 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    DashboardImageUpload
+} from "@/app/[locale]/(dashboard)/_components/common/Modal";
+import { useTranslations } from "next-intl";
+import { supabaseBrowser } from "@/lib/supabase/client";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw, Megaphone, Calendar, Link as LinkIcon, Layers } from "lucide-react";
+
+interface OfferFormProps {
+    initialData?: any;
+    onSuccess: () => void;
+    onCancel: () => void;
+    formId?: string;
+}
+
+export default function OfferForm({ initialData, onSuccess, onCancel, formId }: OfferFormProps) {
+    const t = useTranslations("dashboard");
+    const [products, setProducts] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const { register, handleSubmit, setValue, watch } = useForm({
+        defaultValues: initialData || {
+            type: "both",
+            title_en: "",
+            title_ar: "",
+            description_en: "",
+            description_ar: "",
+            image_url: "",
+            link: "",
+            product_id: null,
+            category_id: null,
+            is_active: true,
+            position: 0,
+            start_date: "",
+            end_date: "",
+            seo_title_en: "",
+            seo_title_ar: "",
+            seo_description_en: "",
+            seo_description_ar: "",
+            seo_keywords_en: "",
+            seo_keywords_ar: "",
+        }
+    });
+
+    const offerType = watch("type");
+    const imageUrl = watch("image_url");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data: prods } = await supabaseBrowser.from('products').select('id, name_en, name_ar');
+            const { data: cats } = await supabaseBrowser.from('categories').select('id, name_en, name_ar');
+            if (prods) setProducts(prods);
+            if (cats) setCategories(cats);
+        };
+        fetchData();
+    }, []);
+
+    // Ensure form reflects new initialData when editing
+    useEffect(() => {
+        if (!initialData) return;
+        // Reset all fields to initialData
+        // We use a small inline reset via setValue to avoid importing reset from useForm config above
+        Object.entries(initialData).forEach(([key, val]) => {
+            // @ts-ignore
+            setValue(key, val as any, { shouldDirty: false });
+        });
+        // Normalize image URL if it's a storage path
+        if (initialData.image_url && typeof initialData.image_url === "string" && !/^https?:\/\//.test(initialData.image_url)) {
+            const { data } = supabaseBrowser.storage.from('offers').getPublicUrl(initialData.image_url);
+            if (data?.publicUrl) {
+                setValue("image_url", data.publicUrl, { shouldDirty: false });
+            }
+        }
+    }, [initialData, setValue]);
+
+    const onSubmit = async (data: any) => {
+        setLoading(true);
+        try {
+            const finalData = {
+                ...data,
+                product_id: data.product_id === "none" ? null : data.product_id,
+                category_id: data.category_id === "none" ? null : data.category_id,
+                start_date: data.start_date || null,
+                end_date: data.end_date || null,
+                seo_keywords_en: typeof data.seo_keywords_en === 'string' ? data.seo_keywords_en.split(',').map((k: string) => k.trim()).filter(Boolean) : data.seo_keywords_en,
+                seo_keywords_ar: typeof data.seo_keywords_ar === 'string' ? data.seo_keywords_ar.split(',').map((k: string) => k.trim()).filter(Boolean) : data.seo_keywords_ar,
+            };
+
+            if (initialData?.id) {
+                const { error } = await supabaseBrowser
+                    .from('offers')
+                    .update(finalData)
+                    .eq('id', initialData.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabaseBrowser
+                    .from('offers')
+                    .insert([finalData]);
+                if (error) throw error;
+            }
+            onSuccess();
+        } catch (error: any) {
+            console.error("Error saving offer:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+            <div className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar space-y-12 py-2 px-1">
+
+                {/* Section: General */}
+                <section className="space-y-6">
+                    <div className="flex items-center gap-4 transition-all group">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
+                            <Megaphone className="h-5 w-5 stroke-[2]" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("General")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("BasicInfo")}</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl bg-background/60 border border-border/60">
+                            <div className="space-y-2 group">
+                                <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                    {t("Type")}
+                                </Label>
+                                <Select onValueChange={(val) => setValue("type", val)} defaultValue={initialData?.type || "both"}>
+                                    <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                        <SelectValue placeholder="Select type" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
+                                        <SelectItem value="both" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Both Image & Text</SelectItem>
+                                        <SelectItem value="image" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Image Only (Banner)</SelectItem>
+                                        <SelectItem value="text" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Text Only (Announcement)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2 group">
+                                <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                    {t("Position")}
+                                </Label>
+                                <Input {...register("position")} type="number" className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
+                            </div>
+                        </div>
+
+                        {offerType !== "image" && (
+                            <>
+                                {[
+                                    { label: t("TitleEn"), name: "title_en", required: true },
+                                    { label: t("TitleAr"), name: "title_ar", required: true }
+                                ].map((field) => (
+                                    <div key={field.name} className="space-y-2 group">
+                                        <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                            {field.label}
+                                        </Label>
+                                        <Input
+                                            {...register(field.name, { required: field.required })}
+                                            className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm"
+                                        />
+                                    </div>
+                                ))}
+
+                                {[
+                                    { label: t("DescriptionEn"), name: "description_en", h: "h-24" },
+                                    { label: t("DescriptionAr"), name: "description_ar", h: "h-24" },
+                                ].map((area) => (
+                                    <div key={area.name} className="space-y-2 md:col-span-1">
+                                        <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
+                                            {area.label}
+                                        </Label>
+                                        <Textarea
+                                            {...register(area.name)}
+                                            className={`rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm leading-relaxed custom-scrollbar ${area.h}`}
+                                        />
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                    </div>
+                </section>
+
+                {/* Section: Linking */}
+                <section className="space-y-6">
+                    <div className="flex items-center gap-4 transition-all group">
+                        <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 ring-1 ring-orange-500/20 transition-transform">
+                            <LinkIcon className="h-5 w-5 stroke-[2]" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">Linking & Connectivity</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">Target Product or Category</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("Product")}
+                            </Label>
+                            <Select onValueChange={(val) => setValue("product_id", val)} defaultValue={initialData?.product_id}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                    <SelectValue placeholder="Link to product" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
+                                    <SelectItem value="none" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">None</SelectItem>
+                                    {products.map(p => (
+                                        <SelectItem key={p.id} value={p.id} className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">{p.name_en}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("Category")}
+                            </Label>
+                            <Select onValueChange={(val) => setValue("category_id", val)} defaultValue={initialData?.category_id}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                    <SelectValue placeholder="Link to category" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
+                                    <SelectItem value="none" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">None</SelectItem>
+                                    {categories.map(c => (
+                                        <SelectItem key={c.id} value={c.id} className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">{c.name_en}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="md:col-span-2 space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                Custom {t("Link")} (URL)
+                            </Label>
+                            <Input {...register("link")} placeholder="https://..." className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Section: Schedule */}
+                <section className="space-y-6">
+                    <div className="flex items-center gap-4 transition-all group">
+                        <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 ring-1 ring-blue-500/20 transition-transform">
+                            <Calendar className="h-5 w-5 stroke-[2]" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">Timeline</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">Start & End Dates</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("StartDate")}
+                            </Label>
+                            <Input {...register("start_date")} type="datetime-local" className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
+                        </div>
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("EndDate")}
+                            </Label>
+                            <Input {...register("end_date")} type="datetime-local" className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
+                        </div>
+
+                        <div className="md:col-span-2 flex items-center gap-4 bg-background/60 p-6 rounded-2xl border border-border/60 shadow-sm">
+                            <Switch
+                                checked={watch("is_active")}
+                                onCheckedChange={(val) => setValue("is_active", val)}
+                                className="data-[state=checked]:bg-primary scale-90"
+                            />
+                            <Label className="text-sm font-medium text-muted-foreground"> {t("Active")} Status</Label>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Section: Image */}
+                {offerType !== "text" && (
+                    <section className="space-y-6">
+                        <div className="flex items-center gap-4 transition-all group">
+                            <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 ring-1 ring-purple-500/20 transition-transform">
+                                <ImageIcon className="h-5 w-5 stroke-[2]" />
+                            </div>
+                            <div>
+                                <h3 className="text-base font-semibold tracking-tight text-foreground">Visual Asset</h3>
+                                <p className="text-[11px] font-medium text-muted-foreground">Offer Banner / Image</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-background/60 border border-dashed border-border/60 rounded-2xl p-10 flex flex-col items-center hover:bg-foreground/[0.02] transition-colors">
+                            <DashboardImageUpload
+                                value={imageUrl}
+                                onUpload={(url) => setValue("image_url", url)}
+                                bucket="offers"
+                            />
+                            <div className="mt-6 text-center space-y-1">
+                                <p className="text-[11px] font-semibold tracking-wide text-foreground/80">{t("ImageUrl")}</p>
+                                <p className="text-[11px] font-medium text-muted-foreground/80">High-resolution banner recommended</p>
+                            </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* Section: SEO */}
+                <section className="space-y-6">
+                    <div className="flex items-center gap-4 transition-all group">
+                        <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 ring-1 ring-green-500/20 transition-transform">
+                            <Globe className="h-5 w-5 stroke-[2]" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} Settings</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">Search Optimization</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
+                        {[
+                            { label: "SEO Title (EN)", name: "seo_title_en" },
+                            { label: "SEO Title (AR)", name: "seo_title_ar" },
+                            { label: "SEO Description (EN)", name: "seo_description_en", area: true },
+                            { label: "SEO Description (AR)", name: "seo_description_ar", area: true },
+                            { label: "Keywords (EN)", name: "seo_keywords_en", placeholder: "sale, luxury, offer" },
+                            { label: "Keywords (AR)", name: "seo_keywords_ar", placeholder: "تخفيضات, عروض, خصم" }
+                        ].map((seo) => (
+                            <div key={seo.name} className={`space-y-2 ${seo.area ? 'md:col-span-2' : ''}`}>
+                                <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
+                                    {seo.label}
+                                </Label>
+                                {seo.area ? (
+                                    <Textarea {...register(seo.name)} className="h-24 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm" />
+                                ) : (
+                                    <Input
+                                        {...register(seo.name)}
+                                        placeholder={seo.placeholder}
+                                        className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            </div>
+        </form>
+    );
+}
