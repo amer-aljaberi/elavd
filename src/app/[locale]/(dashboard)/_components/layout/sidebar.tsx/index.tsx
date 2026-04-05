@@ -16,7 +16,10 @@ import {
     Settings,
     ChevronRight,
     LogOut,
-    Loader2
+    Loader2,
+    X,
+    ArrowLeft,
+    ArrowRight
 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -24,6 +27,7 @@ import Image from 'next/image';
 import logo from '@/assets/dneest-logo.webp';
 import { useRouter } from 'next/navigation';
 import useAppStore from '@/store/store';
+import { useEffect } from 'react';
 
 
 const nav = [
@@ -42,8 +46,23 @@ export default function Sidebar() {
     const router = useRouter();
     const isAr = locale === 'ar';
     const logoutStore = useAppStore((state) => state.logout);
+    const { isSidebarOpen, setSidebarOpen, toggleSidebar } = useAppStore();
     const t = useTranslations("common");
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 1024) {
+                setSidebarOpen(false);
+            } else {
+                setSidebarOpen(true);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [setSidebarOpen]);
 
     const handleLogout = async () => {
         if (isLoading) return;
@@ -59,58 +78,89 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="w-72 shrink-0 border-e border-primary/5 bg-background dark:bg-card/50 flex flex-col h-screen sticky top-0 transition-all duration-300">
-            <div className="p-8 flex items-center gap-3">
-                <Image src={logo} alt="Logo" width={200} height={200} />
-            </div>
+        <>
+            {/* Mobile Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
-            <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
-                {nav.map((n) => {
-                    const isActive = pathname === n.href || pathname === `/${locale}${n.href}`;
-                    const Icon = n.icon;
+            <aside className={cn(
+                "fixed lg:sticky top-0 h-screen bg-background border-e border-primary/5 flex flex-col transition-all duration-500 z-40",
+                isSidebarOpen ? "w-72 translate-x-0" : "w-0 -translate-x-full lg:w-0 lg:translate-x-0 opacity-0 overflow-hidden",
+                isAr && !isSidebarOpen ? "translate-x-full" : ""
+            )}>
+                <div className="p-8 flex items-center justify-between gap-3">
+                    <Image src={logo} alt="Logo" width={170} height={40} className="w-auto h-10 object-contain" />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="lg:hidden"
+                        onClick={() => setSidebarOpen(false)}
+                    >
+                        <X className="h-5 w-5" />
+                    </Button>
+                </div>
 
-                    return (
-                        <Link
-                            key={n.href}
-                            href={n.href}
-                            className={cn(
-                                'flex items-center justify-between group rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 relative overflow-hidden',
-                                isActive
-                                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                                    : 'text-muted-foreground hover:bg-primary/5 hover:text-primary'
-                            )}
-                        >
-                            <div className="flex items-center gap-3 relative z-10">
-                                <Icon className={cn(
-                                    "h-5 w-5 transition-transform duration-300 group-hover:scale-110",
-                                    isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"
-                                )} />
-                                <span>{n.label[isAr ? 'ar' : 'en']}</span>
-                            </div>
+                <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar pt-2">
+                    {nav.map((n) => {
+                        const isActive = pathname === n.href || pathname === `/${locale}${n.href}`;
+                        const Icon = n.icon;
 
-                            {isActive && (
-                                <ChevronRight className="h-4 w-4 text-primary-foreground/70 animate-in slide-in-from-left-2 duration-300 rtl:rotate-180" />
-                            )}
+                        return (
+                            <Link
+                                key={n.href}
+                                href={n.href}
+                                onClick={() => {
+                                    if (window.innerWidth < 1024) setSidebarOpen(false);
+                                }}
+                                className={cn(
+                                    'flex items-center justify-between group rounded-2xl px-5 py-3.5 text-sm font-bold transition-all duration-300 relative overflow-hidden',
+                                    isActive
+                                        ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/25'
+                                        : 'text-muted-foreground hover:bg-primary/5 hover:text-primary'
+                                )}
+                            >
+                                <div className="flex items-center gap-3 relative z-10">
+                                    <Icon className={cn(
+                                        "h-5 w-5 transition-all duration-300 group-hover:scale-110",
+                                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"
+                                    )} />
+                                    <span>{n.label[isAr ? 'ar' : 'en']}</span>
+                                </div>
+
+                                {isActive && (
+                                    <ChevronRight className="h-4 w-4 text-primary-foreground/70 animate-in slide-in-from-left-2 duration-300 rtl:rotate-180" />
+                                )}
+                            </Link>
+                        );
+                    })}
+                </nav>
+
+                <div className="p-6 mt-auto">
+                    <Button variant="link" asChild className="w-full h-12 mb-5 flex items-center gap-2 text-sm font-medium border-2 border-main rounded-2xl !text-black hover:text-primary transition-all duration-300">
+                        <Link href="/">
+                            <p>back to website</p>
+                            <ArrowRight className="h-5 w-5" />
                         </Link>
-                    );
-                })}
-            </nav>
-
-            <div className="p-6">
-                <Button 
-                    onClick={handleLogout} 
-                    disabled={isLoading}
-                    variant="outline" 
-                    className="w-full hover:bg-red-500 bg-red-500/10 rounded-xl disabled:opacity-50"
-                >
-                    {isLoading ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                        <LogOut className="h-4 w-4 mr-2" />
-                    )}
-                    {t("Logout")}
-                </Button>
-            </div>
-        </aside>
+                    </Button>
+                    <Button
+                        onClick={handleLogout}
+                        disabled={isLoading}
+                        variant="outline"
+                        className="w-full h-12 hover:bg-rose-500 hover:text-white bg-rose-500/10 border-none text-rose-600 rounded-2xl font-bold transition-all duration-300 disabled:opacity-50"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                        ) : (
+                            <LogOut className="h-5 w-5 mr-3" />
+                        )}
+                        {t("Logout")}
+                    </Button>
+                </div>
+            </aside>
+        </>
     );
 }

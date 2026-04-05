@@ -14,9 +14,13 @@ import {
 import {
     DashboardModal
 } from "@/app/[locale]/(dashboard)/_components/common/Modal";
+import {
+    DashboardHeader
+} from "@/app/[locale]/(dashboard)/_components/common/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import { Edit2, Eye, RefreshCw, ShoppingBag, User as UserIcon, Calendar, CheckCircle2, Clock, Truck, XCircle, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import UpdateStatus from "./UpdateStatus";
@@ -118,48 +122,59 @@ export default function OrderList() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center justify-between">
-                    <DashboardSearch
-                        placeholder={t("SearchOrders") || "Search Order ID..."}
-                        onChange={(val) => { setSearch(val); setPage(1); }}
-                        className="w-full md:w-[28rem]"
-                    />
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-between md:justify-end w-full md:w-auto">
-                        <DashboardSelectFilter
-                            value={statusFilter}
-                            onChange={(val) => { setStatusFilter(val); setPage(1); }}
-                            options={[
-                                { label: t("All") || "All", value: "all" },
-                                { label: t("Pending") || "Pending", value: "pending" },
-                                { label: t("Processing") || "Processing", value: "processing" },
-                                { label: t("Shipped") || "Shipped", value: "shipped" },
-                                { label: t("Delivered") || "Delivered", value: "delivered" },
-                                { label: t("Canceled") || "Canceled", value: "canceled" },
-                            ]}
-                            placeholder={t("Filter") || "Filter"}
-                        />
-                        <Button variant="outline" size="icon" onClick={fetchOrders} className="h-8 w-8 md:h-9 md:w-9 rounded-full border-border/60 hover:border-foreground/30">
-                            <RefreshCw className={loading ? "animate-spin" : ""} />
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+            <DashboardHeader
+                title={t("Orders")}
+                description={t("OrdersPageDescription")}
+                actions={
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={fetchOrders}
+                            className="h-12 w-12 rounded-2xl border-border/40 bg-background/40 hover:bg-background/60 transition-all duration-300 shadow-sm shrink-0"
+                        >
+                            <RefreshCw className={cn("h-5 w-5 text-muted-foreground", loading && "animate-spin")} />
                         </Button>
                     </div>
+                }
+            >
+                <DashboardSearch
+                    placeholder={t("SearchOrderID")}
+                    onChange={(val) => { setSearch(val); setPage(1); }}
+                    className="w-full lg:w-[32rem]"
+                />
+
+                <div className="flex flex-wrap items-center gap-3 justify-end flex-1">
+                    <DashboardSelectFilter
+                        value={statusFilter}
+                        onChange={(val) => { setStatusFilter(val); setPage(1); }}
+                        options={[
+                            { label: t("All"), value: "all" },
+                            { label: t("Pending"), value: "pending" },
+                            { label: t("Processing"), value: "processing" },
+                            { label: t("Shipped"), value: "shipped" },
+                            { label: t("Delivered"), value: "delivered" },
+                            { label: t("Canceled"), value: "canceled" },
+                        ]}
+                        placeholder={t("Filter")}
+                        className="w-full sm:w-[180px]"
+                    />
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">
-                        {totalCount} {t("Results") || "results"}
-                    </span>
-                </div>
-            </div>
+            </DashboardHeader>
 
             <DashboardTable headers={[
-                "Order ID",
+                t("OrderID"),
                 t("Customer"),
                 t("Total"),
                 t("Status"),
                 t("CreatedAt"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "", "hidden sm:table-cell", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoOrdersFound") || "No orders found."}
+            >
                 {orders.map((order) => (
                     <DashboardTableRow key={order.id}>
                         <DashboardTableCell>
@@ -172,19 +187,19 @@ export default function OrderList() {
                                 <div className="h-8 w-8 rounded-full bg-primary/5 flex items-center justify-center text-primary">
                                     <UserIcon className="h-4 w-4" />
                                 </div>
-                                <span className="font-bold tracking-tight text-sm">Customer #{order.user_id?.slice(0, 4)}</span>
+                                <span className="font-bold tracking-tight text-sm">{t("CustomerHash")} {order.user_id?.slice(0, 4)}</span>
                             </div>
                         </DashboardTableCell>
                         <DashboardTableCell>
                             <span className="font-bold text-primary font-mono">${order.total_amount?.toFixed(2)}</span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <div className={`flex items-center gap-2 px-3 py-1 rounded-xl border border-dashed font-bold text-[10px] uppercase w-fit ${getStatusStyle(order.status)}`}>
                                 {getStatusIcon(order.status)}
                                 {t(order.status.charAt(0).toUpperCase() + order.status.slice(1))}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                                 <Calendar className="h-3 w-3 opacity-50" />
                                 {new Date(order.created_at).toLocaleDateString(locale)}
@@ -209,13 +224,15 @@ export default function OrderList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal
                 isOpen={isStatusOpen}
                 onClose={() => setIsStatusOpen(false)}
                 title={t("UpdateStatus")}
-                description={`#{selectedOrder?.id.slice(0, 8)}`}
+                description={`${t("OrderID")}: #${selectedOrder?.id?.slice(0, 8)}`}
                 className="max-w-md"
             >
                 <UpdateStatus
@@ -229,7 +246,7 @@ export default function OrderList() {
                 isOpen={isDetailsOpen}
                 onClose={() => setIsDetailsOpen(false)}
                 title={t("OrderDetails")}
-                description={`Comprehensive audit for #${selectedOrder?.id.slice(0, 8)}`}
+                description={`${t("OrderDetailsDescription")} ${selectedOrder?.id?.slice(0, 8)}`}
                 className="max-w-4xl"
             >
                 <OrderDetails order={selectedOrder} />

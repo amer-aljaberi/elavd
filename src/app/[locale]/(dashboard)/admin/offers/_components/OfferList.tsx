@@ -14,9 +14,13 @@ import {
 import {
     DashboardModal
 } from "@/app/[locale]/(dashboard)/_components/common/Modal";
+import {
+    DashboardHeader
+} from "@/app/[locale]/(dashboard)/_components/common/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import { Edit2, Trash2, Plus, RefreshCw, Megaphone, ImageIcon, Calendar } from "lucide-react";
 import OfferForm from "./OfferForm";
 import DeleteOffer from "./DeleteOffer";
@@ -67,7 +71,7 @@ export default function OfferList() {
 
         if (error) {
             console.error("Error fetching offers:", error);
-            toast.error("Failed to load offers");
+            toast.error(t("FailedLoadOffers"));
         } else {
             // Normalize image URLs to public URLs if needed
             const normalized = (data || []).map((o) => {
@@ -106,55 +110,68 @@ export default function OfferList() {
         setIsEditOpen(false);
         setIsDeleteOpen(false);
         fetchOffers();
-        toast.success("Done!");
+        toast.success(t("Done"));
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center justify-between">
-                    <DashboardSearch
-                        placeholder={t("SearchOffers") || "Search offers..."}
-                        onChange={(val) => { setSearch(val); setPage(1); }}
-                        className="w-full md:w-[28rem]"
-                    />
-
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-between md:justify-end w-full md:w-auto">
-                        <DashboardSelectFilter
-                            value={statusFilter}
-                            onChange={(val) => { setStatusFilter(val); setPage(1); }}
-                            options={[
-                                { label: t("All") || "All", value: "all" },
-                                { label: t("Active") || "Active", value: "active" },
-                                { label: t("Inactive") || "Inactive", value: "inactive" },
-                                { label: "Banner", value: "banner" },
-                            ]}
-                            placeholder={t("Filter") || "Filter"}
-                        />
-                        <Button variant="outline" size="icon" onClick={fetchOffers} className="h-8 w-8 md:h-9 md:w-9 rounded-full border-border/60 hover:border-foreground/30">
-                            <RefreshCw className={loading ? "animate-spin" : ""} />
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+            <DashboardHeader
+                title={t("Offers")}
+                description={t("OffersDescription")}
+                actions={
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={fetchOffers}
+                            className="h-12 w-12 rounded-2xl border-border/40 bg-background/40 hover:bg-background/60 transition-all duration-300 shadow-sm shrink-0"
+                        >
+                            <RefreshCw className={cn("h-5 w-5 text-muted-foreground", loading && "animate-spin")} />
                         </Button>
-                        <Button onClick={() => { setSelectedOffer(null); setIsEditOpen(true); }} className="font-semibold rounded-full px-4 md:px-6 gap-2 shadow-sm border border-border/60 bg-foreground text-background hover:bg-foreground/90">
+                        <Button
+                            onClick={() => { setSelectedOffer(null); setIsEditOpen(true); }}
+                            className="h-12 px-6 rounded-2xl font-bold tracking-tight gap-2.5 shadow-xl shadow-foreground/10 border-none bg-foreground text-background hover:bg-foreground/90 transition-all duration-300 whitespace-nowrap"
+                        >
                             <Plus className="h-5 w-5 stroke-[3]" />
-                            {t("AddOffer")}
+                            <span>{t("AddOffer")}</span>
                         </Button>
                     </div>
+                }
+            >
+                <DashboardSearch
+                    placeholder={t("SearchOffers")}
+                    onChange={(val) => { setSearch(val); setPage(1); }}
+                    className="w-full lg:w-[32rem]"
+                />
+
+                <div className="flex flex-wrap items-center gap-3 justify-end flex-1">
+                    <DashboardSelectFilter
+                        value={statusFilter}
+                        onChange={(val) => { setStatusFilter(val); setPage(1); }}
+                        options={[
+                            { label: t("All"), value: "all" },
+                            { label: t("Active"), value: "active" },
+                            { label: t("Inactive"), value: "inactive" },
+                            { label: t("Banner"), value: "banner" },
+                        ]}
+                        placeholder={t("Filter")}
+                        className="w-full sm:w-[180px]"
+                    />
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">
-                        {totalCount} {t("Results") || "results"}
-                    </span>
-                </div>
-            </div>
+            </DashboardHeader>
 
             <DashboardTable headers={[
                 t("Images"),
                 t("TitleEn"),
                 t("Type"),
-                "Timeline",
+                t("Timeline"),
                 t("Status"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "hidden sm:table-cell", "hidden md:table-cell", "hidden sm:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoOffersFound") || "No offers found."}
+            >
                 {offers.map((offer) => (
                     <DashboardTableRow key={offer.id}>
                         <DashboardTableCell>
@@ -171,15 +188,15 @@ export default function OfferList() {
                         <DashboardTableCell>
                             <div className="flex flex-col">
                                 <span className="font-semibold tracking-tight text-sm">{isAr ? offer.title_ar : offer.title_en}</span>
-                                {offer.position > 0 && <span className="text-[10px] text-muted-foreground">Pos: {offer.position}</span>}
+                                {offer.position > 0 && <span className="text-[10px] text-muted-foreground">{t("Pos")}: {offer.position}</span>}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <span className="text-[10px] uppercase font-medium text-primary bg-primary/5 px-2 py-0.5 rounded-full">
                                 {offer.type}
                             </span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
                                 <Calendar className="h-3 w-3" />
                                 <span>{offer.start_date ? new Date(offer.start_date).toLocaleDateString(locale) : "-"}</span>
@@ -187,7 +204,7 @@ export default function OfferList() {
                                 <span>{offer.end_date ? new Date(offer.end_date).toLocaleDateString(locale) : "-"}</span>
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <div className={`h-2.5 w-2.5 rounded-full ${offer.is_active ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                         </DashboardTableCell>
                         <DashboardTableCell>
@@ -209,13 +226,15 @@ export default function OfferList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal
                 isOpen={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
                 title={selectedOffer ? t("EditOffer") : t("AddOffer")}
-                description={selectedOffer ? (isAr ? selectedOffer.title_ar : selectedOffer.title_en) : "Create a new visual promotion."}
+                description={selectedOffer ? (isAr ? selectedOffer.title_ar : selectedOffer.title_en) : t("AddOfferDescription")}
                 className="max-w-5xl"
                 footer={
                     <div className="flex items-center gap-2">

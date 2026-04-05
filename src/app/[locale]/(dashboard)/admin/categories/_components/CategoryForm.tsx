@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,6 +12,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw, Layers } from "lucide-react";
+import TextEditor from "@/components/TextEditor";
 
 interface CategoryFormProps {
     initialData?: any;
@@ -24,7 +25,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
     const t = useTranslations("dashboard");
     const [loading, setLoading] = useState(false);
 
-    const { register, handleSubmit, setValue, watch } = useForm({
+    const { register, handleSubmit, setValue, watch, control } = useForm({
         defaultValues: initialData || {
             name_en: "",
             name_ar: "",
@@ -53,16 +54,18 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                 seo_keywords_ar: typeof data.seo_keywords_ar === 'string' ? data.seo_keywords_ar.split(',').map((k: string) => k.trim()).filter(Boolean) : data.seo_keywords_ar,
             };
 
+            const { id: _id, created_at: _createdAt, updated_at: _updatedAt, ...cleanData } = finalData;
+
             if (initialData?.id) {
                 const { error } = await supabaseBrowser
                     .from('categories')
-                    .update(finalData)
+                    .update(cleanData)
                     .eq('id', initialData.id);
                 if (error) throw error;
             } else {
                 const { error } = await supabaseBrowser
                     .from('categories')
-                    .insert([finalData]);
+                    .insert([cleanData]);
                 if (error) throw error;
             }
             onSuccess();
@@ -117,7 +120,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                         </div>
                         <div>
                             <h3 className="text-base font-semibold tracking-tight text-foreground">{t("Descriptions")}</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Localized Content</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("LocalizedContent")}</p>
                         </div>
                     </div>
 
@@ -130,9 +133,16 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
                                     {area.label}
                                 </Label>
-                                <Textarea
-                                    {...register(area.name)}
-                                    className={`rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm leading-relaxed custom-scrollbar ${area.h}`}
+                                <Controller
+                                    control={control}
+                                    name={area.name}
+                                    render={({ field }) => (
+                                        <TextEditor
+                                            value={field.value}
+                                            onChange={(text, html) => field.onChange(html)}
+                                            dir={area.name.endsWith("_ar") ? "rtl" : "ltr"}
+                                        />
+                                    )}
                                 />
                             </div>
                         ))}
@@ -147,7 +157,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                         </div>
                         <div>
                             <h3 className="text-base font-semibold tracking-tight text-foreground">{t("Images")}</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Visual Brand</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("VisualBrand")}</p>
                         </div>
                     </div>
 
@@ -159,7 +169,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                         />
                         <div className="mt-6 text-center space-y-1">
                             <p className="text-[11px] font-semibold tracking-wide text-foreground/80">{t("ImageUrl")}</p>
-                            <p className="text-[11px] font-medium text-muted-foreground/80">Recommended size: 512x512px</p>
+                            <p className="text-[11px] font-medium text-muted-foreground/80">{t("ImageRecommendedSizeCategory")}</p>
                         </div>
                     </div>
                 </section>
@@ -171,19 +181,19 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                             <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
-                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} Settings</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Search Optimization</p>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} {t("Settings")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("SearchOptimization")}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
                         {[
-                            { label: "SEO Title (EN)", name: "seo_title_en" },
-                            { label: "SEO Title (AR)", name: "seo_title_ar" },
-                            { label: "SEO Description (EN)", name: "seo_description_en", area: true },
-                            { label: "SEO Description (AR)", name: "seo_description_ar", area: true },
-                            { label: "Keywords (EN)", name: "seo_keywords_en", placeholder: "toys, kids, games" },
-                            { label: "Keywords (AR)", name: "seo_keywords_ar", placeholder: "ألعاب, أطفال, ترفيه" }
+                            { label: t("SEOTitleEn"), name: "seo_title_en" },
+                            { label: t("SEOTitleAr"), name: "seo_title_ar" },
+                            { label: t("SEODescEn"), name: "seo_description_en", area: true },
+                            { label: t("SEODescAr"), name: "seo_description_ar", area: true },
+                            { label: t("Keywords") + " (EN)", name: "seo_keywords_en", placeholder: t("KeywordsCategoryPlaceholder") },
+                            { label: t("Keywords") + " (AR)", name: "seo_keywords_ar", placeholder: t("KeywordsCategoryPlaceholder") }
                         ].map((seo) => (
                             <div key={seo.name} className={`space-y-2 ${seo.area ? 'md:col-span-2' : ''}`}>
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">

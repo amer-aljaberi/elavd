@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { RefreshCcw, Edit2, Shield, User as UserIcon, Mail, Lock, User as NameIcon } from "lucide-react";
-import { 
-  DashboardTable, 
-  DashboardTableRow, 
-  DashboardTableCell 
+import {
+    DashboardTable,
+    DashboardTableRow,
+    DashboardTableCell
 } from "@/app/[locale]/(dashboard)/_components/common/Table";
 import { DashboardModal } from "@/app/[locale]/(dashboard)/_components/common/Modal";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export default function UserList() {
     const onUpdate = async (data: any) => {
         if (!editUser) return;
         setUpdating(true);
-        
+
         // Only include password if it's not empty
         const updates: any = {
             email: data.email,
@@ -73,15 +73,15 @@ export default function UserList() {
                 .eq('id', editUser.id);
 
             if (updateError) {
-                toast.error("Update failed", { description: updateError.message });
+                toast.error(tDashboard("UpdateFailed"), { description: updateError.message });
             } else {
-                toast.success("User updated successfully");
+                toast.success(tDashboard("UpdateSuccess"));
                 setEditUser(null);
                 reset();
                 fetchUsers();
             }
         } catch (err: any) {
-            toast.error("Failed to update user", { description: err.message });
+            toast.error(tDashboard("FailedToUpdateUser"), { description: err.message });
         } finally {
             setUpdating(false);
         }
@@ -89,7 +89,7 @@ export default function UserList() {
 
     const headers = [
         tDashboard("Email"),
-        "Name",
+        tDashboard("Name"),
         tDashboard("Role"),
         tDashboard("CreatedAt"),
         tDashboard("Actions")
@@ -105,40 +105,44 @@ export default function UserList() {
         <div className="space-y-4">
             <div className="flex justify-between items-center px-4 py-2 bg-muted/20 rounded-2xl border border-primary/5">
                 <p className="text-sm font-bold text-muted-foreground">
-                    Total: <span className="text-foreground">{users.length}</span>
+                    {tDashboard("TotalCount")}: <span className="text-foreground">{users.length}</span>
                 </p>
                 <Button variant="ghost" size="sm" onClick={fetchUsers} className="text-xs font-bold hover:text-primary">
                     <RefreshCcw className="h-3 w-3 mr-2" />
-                    Refresh
+                    {tDashboard("Refresh")}
                 </Button>
             </div>
 
-            <DashboardTable headers={headers}>
+            <DashboardTable
+                headers={headers}
+                headerClasses={["", "hidden sm:table-cell", "", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={tDashboard("NoUsersFound") || "No users found."}
+            >
                 {users.map((user) => (
                     <DashboardTableRow key={user.id}>
                         <DashboardTableCell className="font-bold">
                             {user.email}
                         </DashboardTableCell>
-                        <DashboardTableCell className="text-muted-foreground">
+                        <DashboardTableCell className="text-muted-foreground hidden sm:table-cell">
                             {user.name || '-'}
                         </DashboardTableCell>
                         <DashboardTableCell>
-                            <div className={`px-2 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 ${
-                                user.role === 'admin' 
-                                ? 'bg-primary/10 text-primary' 
+                            <div className={`px-2 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 ${user.role === 'admin'
+                                ? 'bg-primary/10 text-primary'
                                 : 'bg-muted text-muted-foreground'
-                            }`}>
+                                }`}>
                                 {user.role === 'admin' ? <Shield className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
                                 {user.role === 'admin' ? tDashboard("Admin") : tDashboard("User")}
                             </div>
                         </DashboardTableCell>
-                        <DashboardTableCell className="text-xs text-muted-foreground font-medium">
+                        <DashboardTableCell className="text-xs text-muted-foreground font-medium hidden md:table-cell">
                             {user.created_at ? format(new Date(user.created_at), 'MMM dd, yyyy') : '-'}
                         </DashboardTableCell>
                         <DashboardTableCell>
-                            <Button 
-                                variant="ghost" 
-                                size="sm" 
+                            <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => setEditUser(user)}
                                 className="h-8 w-8 p-0 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
                             >
@@ -150,9 +154,9 @@ export default function UserList() {
             </DashboardTable>
 
             {/* Edit Modal */}
-            <DashboardModal 
-                isOpen={!!editUser} 
-                onClose={() => setEditUser(null)} 
+            <DashboardModal
+                isOpen={!!editUser}
+                onClose={() => setEditUser(null)}
                 title={tDashboard("EditUser")}
                 description={editUser?.email}
             >
@@ -160,11 +164,11 @@ export default function UserList() {
                     <div className="space-y-2">
                         <label className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                             <NameIcon className="h-3 w-3" />
-                            Name
+                            {tDashboard("Name")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("name")}
-                            placeholder="User full name"
+                            placeholder={tDashboard("UserNamePlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
                     </div>
@@ -174,10 +178,10 @@ export default function UserList() {
                             <Mail className="h-3 w-3" />
                             {tDashboard("Email")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("email")}
                             type="email"
-                            placeholder="Email address"
+                            placeholder={tDashboard("EmailPlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
                     </div>
@@ -185,15 +189,15 @@ export default function UserList() {
                     <div className="space-y-4">
                         <label className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                             <Lock className="h-3 w-3" />
-                            Password
+                            {tDashboard("Password")}
                         </label>
-                        <Input 
+                        <Input
                             {...register("password")}
                             type="password"
-                            placeholder="Leave empty to keep current password"
+                            placeholder={tDashboard("PasswordPlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
-                        <p className="text-[10px] text-muted-foreground italic">If you provide a new password, it will be updated.</p>
+                        <p className="text-[10px] text-muted-foreground italic">{tDashboard("PasswordHint")}</p>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-6 border-t border-primary/5">
@@ -208,4 +212,4 @@ export default function UserList() {
             </DashboardModal>
         </div>
     );
-}
+}

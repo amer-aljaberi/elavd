@@ -16,79 +16,141 @@ interface SearchBoxProps {
   placeholder?: string;
   onChange?: (val: string) => void;
   className?: string;
-  filters?: { label: string; value: string }[];
-  onFilterSelect?: (val: string) => void;
-  selectedFilterValue?: string;
 }
 
-export function DashboardSearch({ placeholder, onChange, className, filters, onFilterSelect, selectedFilterValue }: SearchBoxProps) {
+export function DashboardSearch({ placeholder, onChange, className }: SearchBoxProps) {
   return (
-    <div className={cn("flex flex-col md:flex-row items-stretch md:items-center gap-3", className)}>
-      <div className="relative group flex-1">
-        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
-        <input
-          type="text"
-          placeholder={placeholder || "Search items..."}
-          onChange={(e) => onChange?.(e.target.value)}
-          className="h-11 w-full rounded-full bg-background/60 backdrop-blur border border-border/60 focus:ring-2 focus:ring-primary/10 focus:border-border transition-all outline-none pl-11 pr-10 text-sm font-medium shadow-sm"
-        />
+    <div className={cn("relative group flex-1", className)}>
+      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <SearchIcon className="h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors duration-300" />
       </div>
-      {filters && onFilterSelect && (
-        <DashboardFilter options={filters} onSelect={onFilterSelect} selectedValue={selectedFilterValue} />
-      )}
+      <input
+        type="text"
+        placeholder={placeholder || "Search items..."}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="block h-12 w-full rounded-sm bg-background/40 backdrop-blur-xl border border-border/40 focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all duration-300 outline-none pl-11 pr-4 text-sm font-medium shadow-sm hover:bg-background/60"
+      />
     </div>
   );
 }
 
 export function DashboardFilter({ options, onSelect, selectedValue }: { options: { label: string, value: string }[], onSelect: (val: string) => void, selectedValue?: string }) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-      <div className="flex items-center gap-2 px-4 py-2 bg-background/60 backdrop-blur rounded-full border border-border/60">
-        <FilterIcon className="h-4 w-4 text-foreground/70" />
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/80">Filter</span>
+    <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex items-center gap-2 px-4 py-2.5 bg-background/40 backdrop-blur-xl rounded-2xl border border-border/40 shrink-0">
+        <FilterIcon className="h-3.5 w-3.5 text-foreground/70" />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Filter</span>
       </div>
 
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          onClick={() => onSelect(opt.value)}
-          className={cn(
-            "px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all",
-            selectedValue === opt.value
-              ? "bg-foreground text-background border-transparent"
-              : "border-border/60 hover:border-foreground/20 hover:bg-foreground/[0.03]"
-          )}
-        >
-          {opt.label}
-        </button>
-      ))}
+      <div className="flex items-center gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onSelect(opt.value)}
+            className={cn(
+              "px-5 py-2.5 cursor-pointer rounded-2xl text-xs font-semibold whitespace-nowrap border transition-all duration-300 shrink-0",
+              selectedValue === opt.value
+                ? "bg-foreground text-background border-transparent shadow-lg shadow-foreground/10 translate-y-[-1px]"
+                : "bg-background/20 border-border/40 text-muted-foreground hover:border-foreground/20 hover:bg-background/60 hover:text-foreground"
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
-export function DashboardPagination({ page, totalPages, onPrev, onNext }: { page: number, totalPages: number, onPrev: () => void, onNext: () => void }) {
-  return (
-    <div className="flex items-center justify-between mt-8 p-4 bg-background/60 backdrop-blur border border-border/60 rounded-xl">
-      <p className="text-xs font-medium text-muted-foreground">Page <span className="text-foreground font-semibold">{page}</span> of <span className="text-foreground font-semibold">{totalPages}</span></p>
+export function DashboardPagination({
+  page,
+  totalPages,
+  onPrev,
+  onNext,
+  totalCount,
+  onPageSelect,
+}: {
+  page: number;
+  totalPages: number;
+  onPrev: () => void;
+  onNext: () => void;
+  totalCount?: number;
+  onPageSelect?: (p: number) => void;
+}) {
+  const makePages = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
+    const maxButtons = 5;
+    if (totalPages <= maxButtons) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
+    }
+    const add = (p: number | string) => pages.push(p);
+    add(1);
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+    if (start > 2) add("…");
+    for (let i = start; i <= end; i++) add(i);
+    if (end < totalPages - 1) add("…");
+    add(totalPages);
+    return pages;
+  };
 
-      <div className="flex items-center gap-2">
+  const pageSize = 10;
+  const from = (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, totalCount || page * pageSize);
+
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-10 p-5 bg-background/30 backdrop-blur-2xl border border-border/30 rounded-[2rem] shadow-xl shadow-black/[0.02]">
+      <div className="flex flex-col gap-0.5">
+        <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground/60">Pagination</p>
+        {totalCount ? (
+          <p className="text-sm font-medium">
+            Showing <span className="text-foreground font-extrabold">{Math.min(from, totalCount)}</span>
+            <span className="mx-1 opacity-30">–</span>
+            <span className="text-foreground font-extrabold">{to}</span>
+            <span className="mx-2 opacity-30">of</span>
+            <span className="text-muted-foreground">{totalCount}</span>
+          </p>
+        ) : (
+          <p className="text-sm font-medium">
+            Page <span className="text-foreground font-extrabold">{page}</span>
+            <span className="mx-1 opacity-30">/</span>
+            <span className="text-muted-foreground">{totalPages}</span>
+          </p>
+        )}
+      </div>
+
+      <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar">
         <Button
           variant="outline"
-          size="sm"
           onClick={onPrev}
           disabled={page <= 1}
-          className="h-9 w-9 p-0 rounded-full border-border/60 hover:border-foreground/30"
+          className="h-11 w-11 p-0 rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm shrink-0"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-5 w-5" />
         </Button>
+        {makePages().map((p, idx) => (
+          <Button
+            key={`${p}-${idx}`}
+            variant={p === page ? "default" : "outline"}
+            size="sm"
+            onClick={() => typeof p === "number" && onPageSelect?.(p)}
+            disabled={typeof p !== "number"}
+            className={cn(
+              "h-10 min-w-10 px-3 cursor-pointer rounded-2xl shrink-0",
+              p === page ? "bg-foreground text-background hover:bg-foreground/90" : "border-border/40 bg-background/40 hover:border-foreground/20 hover:bg-background/60"
+            )}
+          >
+            {p}
+          </Button>
+        ))}
         <Button
           variant="outline"
-          size="sm"
           onClick={onNext}
           disabled={page >= totalPages}
-          className="h-9 w-9 p-0 rounded-full border-border/60 hover:border-foreground/30"
+          className="h-11 w-11 p-0 cursor-pointer rounded-2xl border-border/40 bg-background/40 hover:bg-foreground hover:text-background hover:border-transparent transition-all duration-300 disabled:opacity-30 shadow-sm shrink-0"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
     </div>
@@ -110,13 +172,16 @@ export function DashboardSelectFilter({
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className={cn("h-9 rounded-full border-border/60 bg-background/60 w-[160px]", className)}>
-        <SelectValue placeholder={placeholder || "Filter"} />
+      <SelectTrigger className={cn("h-12 px-5 rounded-2xl border-border/40 bg-background/40 focus:ring-4 focus:ring-primary/5 min-w-[180px] shadow-sm hover:bg-background/60 transition-all duration-300", className)}>
+        <div className="flex items-center gap-2">
+          <FilterIcon className="h-3.5 w-3.5 text-muted-foreground" />
+          <SelectValue placeholder={placeholder || "Filter"} />
+        </div>
       </SelectTrigger>
-      <SelectContent className="rounded-xl border-border/60 bg-background/70 backdrop-blur">
+      <SelectContent className="rounded-2xl border-border/40 bg-background/80 backdrop-blur-2xl shadow-2xl p-1">
         {options.map((opt) => (
-          <SelectItem key={opt.value} value={opt.value} className="cursor-pointer">
-            {opt.label}
+          <SelectItem key={opt.value} value={opt.value} className="rounded-xl py-2.5 px-4 cursor-pointer focus:bg-foreground focus:text-background transition-colors duration-200">
+            <span className="font-medium">{opt.label}</span>
           </SelectItem>
         ))}
       </SelectContent>

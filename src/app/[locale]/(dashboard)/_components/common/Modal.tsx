@@ -30,10 +30,10 @@ export function DashboardModal({ isOpen, onClose, title, description, children, 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className={cn(
-        "sm:max-w-3xl p-0",
+        "sm:max-w-3xl p-0 z-[2000]",
         className
       )}>
-        <div className="flex flex-col h-full max-h-[90vh]">
+        <div className="flex flex-col h-full max-h-[90vh] !z-[9999999]">
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="text-lg font-semibold tracking-tight text-foreground">
               {title}

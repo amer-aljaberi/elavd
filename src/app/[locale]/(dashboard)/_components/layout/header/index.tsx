@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Bell, Search as SearchIcon, Loader2 } from "lucide-react";
+import { Menu, X, LogOut, User, Bell, Search as SearchIcon, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
     DropdownMenu,
@@ -22,8 +22,11 @@ import useAppStore from "@/store/store";
 export default function Header() {
     const { user, signOut } = useAuth();
     const t = useTranslations("common");
+    const locale = useLocale();
+    const isAr = locale === "ar";
     const router = useRouter();
     const logoutStore = useAppStore((state) => state.logout);
+    const { isSidebarOpen, toggleSidebar } = useAppStore();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLogout = async () => {
@@ -40,7 +43,19 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-30 h-14 sm:h-16 border-b border-primary/10 bg-background/60 backdrop-blur-md flex items-center justify-end px-3 sm:px-6 transition-all">
+        <header className="sticky top-0 z-40 h-14 sm:h-16 border-b border-primary/10 bg-background/60 backdrop-blur-md flex items-center justify-between px-3 sm:px-6 transition-all duration-300">
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleSidebar}
+                className="text-foreground hover:bg-primary/10 hover:text-primary"
+            >
+                {isSidebarOpen ? (
+                    <X className="h-5 w-5 sm:h-6 sm:w-6" />
+                ) : (
+                    <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+                )}
+            </Button>
 
             <div className="flex items-center gap-2 sm:gap-4">
                 <LanguageSwitcher />

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw } from "lucide-react";
+import TextEditor from "@/components/TextEditor";
 
 interface ProductFormProps {
     initialData?: any;
@@ -34,7 +35,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const { register, handleSubmit, setValue, watch, reset } = useForm({
+    const { register, handleSubmit, setValue, watch, reset, control } = useForm({
         defaultValues: initialData || {
             is_active: true,
             is_featured: false,
@@ -163,7 +164,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
 
                         <div className="space-y-2 group">
                             <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
-                                Country of Origin
+                                {t("CountryOfOrigin")}
                             </Label>
                             <Input {...register("country_of_origin")} className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
                         </div>
@@ -173,8 +174,8 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                             {[
                                 { name: "is_active", label: t("Active") },
                                 { name: "is_featured", label: t("Featured") },
-                                { name: "is_popular", label: "Popular" },
-                                { name: "is_event", label: "Event" }
+                                { name: "is_popular", label: t("Popular") },
+                                { name: "is_event", label: t("Event") }
                             ].map((flag) => (
                                 <div key={flag.name} className="flex flex-col items-center gap-3">
                                     <Switch
@@ -199,24 +200,31 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                         </div>
                         <div>
                             <h3 className="text-base font-semibold tracking-tight text-foreground">{t("Descriptions")}</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Localized Content</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("LocalizedContent")}</p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 gap-8">
                         {[
                             { label: t("ShortDescEn"), name: "short_desc_en", h: "h-24" },
                             { label: t("ShortDescAr"), name: "short_desc_ar", h: "h-24" },
                             { label: t("FullDescEn"), name: "full_desc_en", h: "h-40", span: true },
                             { label: t("FullDescAr"), name: "full_desc_ar", h: "h-40", span: true }
                         ].map((area) => (
-                            <div key={area.name} className={`space-y-2 ${area.span ? 'md:col-span-2' : ''}`}>
+                            <div key={area.name} className={`space-y-2 w-full ${area.span ? 'md:col-span-1' : ''}`}>
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
                                     {area.label}
                                 </Label>
-                                <Textarea
-                                    {...register(area.name)}
-                                    className={`rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm leading-relaxed custom-scrollbar ${area.h}`}
+                                <Controller
+                                    control={control}
+                                    name={area.name}
+                                    render={({ field }) => (
+                                        <TextEditor
+                                            value={field.value}
+                                            onChange={(text, html) => field.onChange(html)}
+                                            dir={area.name.endsWith("_ar") ? "rtl" : "ltr"}
+                                        />
+                                    )}
                                 />
                             </div>
                         ))}
@@ -231,7 +239,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                         </div>
                         <div>
                             <h3 className="text-base font-semibold tracking-tight text-foreground">{t("Images")}</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Visual Presentation</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("VisualPresentation")}</p>
                         </div>
                     </div>
 
@@ -243,7 +251,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                         />
                         <div className="mt-6 text-center space-y-1">
                             <p className="text-[11px] font-semibold tracking-wide text-foreground/80">{t("MainImage") || "Primary Image"}</p>
-                            <p className="text-[11px] font-medium text-muted-foreground/80">Recommended size: 1080x1080px</p>
+                            <p className="text-[11px] font-medium text-muted-foreground/80">{t("ImageRecommendedSizeProduct")}</p>
                         </div>
                     </div>
                 </section>
@@ -255,21 +263,21 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                             <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
-                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} Settings</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Search Optimization</p>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} {t("Settings")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("SearchOptimization")}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
                         {[
-                            { label: `${t("Slug")} (EN)`, name: "slug_en", required: true },
-                            { label: `${t("Slug")} (AR)`, name: "slug_ar", required: true },
-                            { label: "SEO Title (EN)", name: "seo_title_en" },
-                            { label: "SEO Title (AR)", name: "seo_title_ar" },
-                            { label: "SEO Description (EN)", name: "seo_description_en", area: true },
-                            { label: "SEO Description (AR)", name: "seo_description_ar", area: true },
-                            { label: "Keywords (EN)", name: "seo_keywords_en", placeholder: "tech, apple, laptop" },
-                            { label: "Keywords (AR)", name: "seo_keywords_ar", placeholder: "تقنية, ابل, لاب توب" }
+                            { label: t("SlugEnLabel"), name: "slug_en", required: true },
+                            { label: t("SlugArLabel"), name: "slug_ar", required: true },
+                            { label: t("SEOTitleEn"), name: "seo_title_en" },
+                            { label: t("SEOTitleAr"), name: "seo_title_ar" },
+                            { label: t("SEODescEn"), name: "seo_description_en", area: true },
+                            { label: t("SEODescAr"), name: "seo_description_ar", area: true },
+                            { label: t("Keywords") + " (EN)", name: "seo_keywords_en", placeholder: t("KeywordsEnPlaceholder") },
+                            { label: t("Keywords") + " (AR)", name: "seo_keywords_ar", placeholder: t("KeywordsArPlaceholder") }
                         ].map((seo) => (
                             <div key={seo.name} className={`space-y-2 ${seo.area ? 'md:col-span-2' : ''}`}>
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">

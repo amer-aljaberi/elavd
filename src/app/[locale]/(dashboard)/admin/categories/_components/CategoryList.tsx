@@ -14,9 +14,13 @@ import {
 import {
     DashboardModal
 } from "@/app/[locale]/(dashboard)/_components/common/Modal";
+import {
+    DashboardHeader
+} from "@/app/[locale]/(dashboard)/_components/common/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils";
 import { Edit2, Trash2, Plus, RefreshCw, Layers, ImageIcon } from "lucide-react";
 import CategoryForm from "./CategoryForm";
 import DeleteCategory from "./DeleteCategory";
@@ -64,7 +68,7 @@ export default function CategoryList() {
 
         if (error) {
             console.error("Error fetching categories:", error);
-            toast.error("Failed to load categories");
+            toast.error(t("FailedLoadCategories"));
         } else {
             setCategories(data || []);
             if (count) {
@@ -95,53 +99,65 @@ export default function CategoryList() {
         setIsEditOpen(false);
         setIsDeleteOpen(false);
         fetchCategories();
-        toast.success("Done!");
+        toast.success(t("Done"));
     };
-
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center justify-between">
-                    <DashboardSearch
-                        placeholder={t("SearchCategories") || "Search categories..."}
-                        onChange={(val) => { setSearch(val); setPage(1); }}
-                        className="w-full md:w-[28rem]"
-                    />
-
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 justify-between md:justify-end w-full md:w-auto">
-                        <DashboardSelectFilter
-                            value={imageFilter}
-                            onChange={(val) => { setImageFilter(val); setPage(1); }}
-                            options={[
-                                { label: t("All") || "All", value: "all" },
-                                { label: t("WithImage") || "With image", value: "with_image" },
-                                { label: t("WithoutImage") || "Without image", value: "without_image" },
-                            ]}
-                            placeholder={t("Filter") || "Filter"}
-                        />
-                        <Button variant="outline" size="icon" onClick={fetchCategories} className="h-8 w-8 md:h-9 md:w-9 rounded-full border-border/60 hover:border-foreground/30">
-                            <RefreshCw className={loading ? "animate-spin" : ""} />
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+            <DashboardHeader
+                title={t("Categories")}
+                description={t("CategoriesDescription")}
+                actions={
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={fetchCategories}
+                            className="h-12 w-12 rounded-2xl border-border/40 bg-background/40 hover:bg-background/60 transition-all duration-300 shadow-sm shrink-0"
+                        >
+                            <RefreshCw className={cn("h-5 w-5 text-muted-foreground", loading && "animate-spin")} />
                         </Button>
-                        <Button onClick={() => { setSelectedCategory(null); setIsEditOpen(true); }} className="font-semibold rounded-full px-4 md:px-6 gap-2 shadow-sm border border-border/60 bg-foreground text-background hover:bg-foreground/90">
+                        <Button
+                            onClick={() => { setSelectedCategory(null); setIsEditOpen(true); }}
+                            className="h-12 px-6 rounded-2xl font-bold tracking-tight gap-2.5 shadow-xl shadow-foreground/10 border-none bg-foreground text-background hover:bg-foreground/90 transition-all duration-300 whitespace-nowrap"
+                        >
                             <Plus className="h-5 w-5 stroke-[3]" />
-                            {t("AddCategory")}
+                            <span>{t("AddCategory")}</span>
                         </Button>
                     </div>
+                }
+            >
+                <DashboardSearch
+                    placeholder={t("SearchCategories")}
+                    onChange={(val) => { setSearch(val); setPage(1); }}
+                    className="w-full lg:w-[32rem]"
+                />
+
+                <div className="flex flex-wrap items-center gap-3 justify-end flex-1">
+                    <DashboardSelectFilter
+                        value={imageFilter}
+                        onChange={(val) => { setImageFilter(val); setPage(1); }}
+                        options={[
+                            { label: t("All"), value: "all" },
+                            { label: t("WithImage"), value: "with_image" },
+                            { label: t("WithoutImage"), value: "without_image" },
+                        ]}
+                        placeholder={t("Filter")}
+                        className="w-full sm:w-[180px]"
+                    />
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">
-                        {totalCount} {t("Results") || "results"}
-                    </span>
-                </div>
-            </div>
+            </DashboardHeader>
 
             <DashboardTable headers={[
                 t("Images"),
                 t("NameEn"),
-                "Slug",
+                t("Slug"),
                 t("CreatedAt"),
                 t("Actions")
-            ]}>
+            ]}
+                headerClasses={["", "", "hidden sm:table-cell", "hidden md:table-cell", ""]}
+                isLoading={loading}
+                emptyMessage={t("NoCategoriesFound") || "No categories found."}
+            >
                 {categories.map((category) => (
                     <DashboardTableRow key={category.id}>
                         <DashboardTableCell>
@@ -158,12 +174,12 @@ export default function CategoryList() {
                         <DashboardTableCell>
                             <span className="font-semibold tracking-tight text-sm">{isAr ? category.name_ar : category.name_en}</span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden sm:table-cell">
                             <span className="text-[10px] uppercase font-medium text-muted-foreground bg-foreground/[0.05] px-3 py-1 rounded-full border border-border/60">
                                 {isAr ? category.slug_ar : category.slug_en}
                             </span>
                         </DashboardTableCell>
-                        <DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
                             <span className="text-xs text-muted-foreground font-medium">
                                 {new Date(category.created_at).toLocaleDateString(locale)}
                             </span>
@@ -187,13 +203,15 @@ export default function CategoryList() {
                 totalPages={totalPages}
                 onPrev={() => setPage(p => Math.max(1, p - 1))}
                 onNext={() => setPage(p => Math.min(totalPages, p + 1))}
+                totalCount={totalCount}
+                onPageSelect={(p) => setPage(p)}
             />
 
             <DashboardModal
                 isOpen={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
                 title={selectedCategory ? t("EditCategory") : t("AddCategory")}
-                description={selectedCategory ? (isAr ? selectedCategory.name_ar : selectedCategory.name_en) : "Define a new product segment."}
+                description={selectedCategory ? (isAr ? selectedCategory.name_ar : selectedCategory.name_en) : t("AddCategoryDescription")}
                 footer={
                     <div className="flex items-center gap-2">
                         <Button

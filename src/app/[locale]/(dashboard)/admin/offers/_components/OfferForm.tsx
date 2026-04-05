@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw, Megaphone, Calendar, Link as LinkIcon, Layers } from "lucide-react";
+import TextEditor from "@/components/TextEditor";
 
 interface OfferFormProps {
     initialData?: any;
@@ -34,7 +35,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const { register, handleSubmit, setValue, watch } = useForm({
+    const { register, handleSubmit, setValue, watch, control } = useForm({
         defaultValues: initialData || {
             type: "both",
             title_en: "",
@@ -71,16 +72,11 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
         fetchData();
     }, []);
 
-    // Ensure form reflects new initialData when editing
     useEffect(() => {
         if (!initialData) return;
-        // Reset all fields to initialData
-        // We use a small inline reset via setValue to avoid importing reset from useForm config above
         Object.entries(initialData).forEach(([key, val]) => {
-            // @ts-ignore
-            setValue(key, val as any, { shouldDirty: false });
+            setValue(key as any, val as any, { shouldDirty: false });
         });
-        // Normalize image URL if it's a storage path
         if (initialData.image_url && typeof initialData.image_url === "string" && !/^https?:\/\//.test(initialData.image_url)) {
             const { data } = supabaseBrowser.storage.from('offers').getPublicUrl(initialData.image_url);
             if (data?.publicUrl) {
@@ -125,8 +121,6 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
     return (
         <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-10">
             <div className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar space-y-12 py-2 px-1">
-
-                {/* Section: General */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
                         <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
@@ -144,16 +138,22 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
                                     {t("Type")}
                                 </Label>
-                                <Select onValueChange={(val) => setValue("type", val)} defaultValue={initialData?.type || "both"}>
-                                    <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
-                                        <SelectValue placeholder="Select type" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
-                                        <SelectItem value="both" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Both Image & Text</SelectItem>
-                                        <SelectItem value="image" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Image Only (Banner)</SelectItem>
-                                        <SelectItem value="text" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">Text Only (Announcement)</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Controller
+                                    name="type"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select onValueChange={field.onChange} value={field.value || "both"}>
+                                            <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                                <SelectValue placeholder={t("SelectTypePlaceholder")} />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
+                                                <SelectItem value="both" className="cursor-pointer">{t("OfferTypeBoth")}</SelectItem>
+                                                <SelectItem value="image" className="cursor-pointer">{t("OfferTypeImage")}</SelectItem>
+                                                <SelectItem value="text" className="cursor-pointer">{t("OfferTypeText")}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
                             </div>
 
                             <div className="space-y-2 group">
@@ -175,40 +175,46 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                             {field.label}
                                         </Label>
                                         <Input
-                                            {...register(field.name, { required: field.required })}
+                                            {...register(field.name as any, { required: field.required })}
                                             className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm"
-                                        />
-                                    </div>
-                                ))}
-
-                                {[
-                                    { label: t("DescriptionEn"), name: "description_en", h: "h-24" },
-                                    { label: t("DescriptionAr"), name: "description_ar", h: "h-24" },
-                                ].map((area) => (
-                                    <div key={area.name} className="space-y-2 md:col-span-1">
-                                        <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
-                                            {area.label}
-                                        </Label>
-                                        <Textarea
-                                            {...register(area.name)}
-                                            className={`rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm leading-relaxed custom-scrollbar ${area.h}`}
                                         />
                                     </div>
                                 ))}
                             </>
                         )}
+                        
+                        {[
+                            { label: t("DescriptionEn"), name: "description_en" },
+                            { label: t("DescriptionAr"), name: "description_ar" },
+                        ].map((area) => (
+                            <div key={area.name} className="space-y-2 md:col-span-1">
+                                <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
+                                    {area.label}
+                                </Label>
+                                <Controller
+                                    control={control}
+                                    name={area.name as any}
+                                    render={({ field }) => (
+                                        <TextEditor
+                                            value={field.value}
+                                            onChange={(text, html) => field.onChange(html)}
+                                            dir={area.name.endsWith("_ar") ? "rtl" : "ltr"}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </section>
-
-                {/* Section: Linking */}
+ 
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
                         <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 ring-1 ring-orange-500/20 transition-transform">
                             <LinkIcon className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
-                            <h3 className="text-base font-semibold tracking-tight text-foreground">Linking & Connectivity</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Target Product or Category</p>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("LinkingConnectivity")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("TargetProductCategory")}</p>
                         </div>
                     </div>
 
@@ -217,54 +223,65 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                             <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
                                 {t("Product")}
                             </Label>
-                            <Select onValueChange={(val) => setValue("product_id", val)} defaultValue={initialData?.product_id}>
-                                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
-                                    <SelectValue placeholder="Link to product" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
-                                    <SelectItem value="none" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">None</SelectItem>
-                                    {products.map(p => (
-                                        <SelectItem key={p.id} value={p.id} className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">{p.name_en}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Controller
+                                name="product_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select onValueChange={field.onChange} value={field.value || "none"}>
+                                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                            <SelectValue placeholder={t("LinkToProduct")} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
+                                            <SelectItem value="none" className="cursor-pointer">{t("None")}</SelectItem>
+                                            {products.map(p => (
+                                                <SelectItem key={p.id} value={p.id} className="cursor-pointer">{p.name_en}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
 
                         <div className="space-y-2 group">
                             <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
                                 {t("Category")}
                             </Label>
-                            <Select onValueChange={(val) => setValue("category_id", val)} defaultValue={initialData?.category_id}>
-                                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
-                                    <SelectValue placeholder="Link to category" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur z-[999]">
-                                    <SelectItem value="none" className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">None</SelectItem>
-                                    {categories.map(c => (
-                                        <SelectItem key={c.id} value={c.id} className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground/[0.04] transition-colors cursor-pointer font-medium text-sm">{c.name_en}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Controller
+                                name="category_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select onValueChange={field.onChange} value={field.value || "none"}>
+                                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                            <SelectValue placeholder={t("LinkToCategory")} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
+                                            <SelectItem value="none" className="cursor-pointer">{t("None")}</SelectItem>
+                                            {categories.map(c => (
+                                                <SelectItem key={c.id} value={c.id} className="cursor-pointer">{c.name_en}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
 
                         <div className="md:col-span-2 space-y-2 group">
                             <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
-                                Custom {t("Link")} (URL)
+                                {t("CustomLink")} ({t("Link")})
                             </Label>
                             <Input {...register("link")} placeholder="https://..." className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm" />
                         </div>
                     </div>
                 </section>
 
-                {/* Section: Schedule */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
                         <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 ring-1 ring-blue-500/20 transition-transform">
                             <Calendar className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
-                            <h3 className="text-base font-semibold tracking-tight text-foreground">Timeline</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Start & End Dates</p>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("Timeline")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("StartEndDates")}</p>
                         </div>
                     </div>
 
@@ -288,12 +305,11 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                 onCheckedChange={(val) => setValue("is_active", val)}
                                 className="data-[state=checked]:bg-primary scale-90"
                             />
-                            <Label className="text-sm font-medium text-muted-foreground"> {t("Active")} Status</Label>
+                            <Label className="text-sm font-medium text-muted-foreground"> {t("ActiveStatus")}</Label>
                         </div>
                     </div>
                 </section>
 
-                {/* Section: Image */}
                 {offerType !== "text" && (
                     <section className="space-y-6">
                         <div className="flex items-center gap-4 transition-all group">
@@ -301,8 +317,8 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                 <ImageIcon className="h-5 w-5 stroke-[2]" />
                             </div>
                             <div>
-                                <h3 className="text-base font-semibold tracking-tight text-foreground">Visual Asset</h3>
-                                <p className="text-[11px] font-medium text-muted-foreground">Offer Banner / Image</p>
+                                <h3 className="text-base font-semibold tracking-tight text-foreground">{t("VisualAsset")}</h3>
+                                <p className="text-[11px] font-medium text-muted-foreground">{t("OfferBannerImage")}</p>
                             </div>
                         </div>
 
@@ -314,42 +330,41 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                             />
                             <div className="mt-6 text-center space-y-1">
                                 <p className="text-[11px] font-semibold tracking-wide text-foreground/80">{t("ImageUrl")}</p>
-                                <p className="text-[11px] font-medium text-muted-foreground/80">High-resolution banner recommended</p>
+                                <p className="text-[11px] font-medium text-muted-foreground/80">{t("ImageRecommendedSizeOffer")}</p>
                             </div>
                         </div>
                     </section>
                 )}
 
-                {/* Section: SEO */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
                         <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 ring-1 ring-green-500/20 transition-transform">
                             <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
-                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} Settings</h3>
-                            <p className="text-[11px] font-medium text-muted-foreground">Search Optimization</p>
+                            <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} {t("Settings")}</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground">{t("SearchOptimization")}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
                         {[
-                            { label: "SEO Title (EN)", name: "seo_title_en" },
-                            { label: "SEO Title (AR)", name: "seo_title_ar" },
-                            { label: "SEO Description (EN)", name: "seo_description_en", area: true },
-                            { label: "SEO Description (AR)", name: "seo_description_ar", area: true },
-                            { label: "Keywords (EN)", name: "seo_keywords_en", placeholder: "sale, luxury, offer" },
-                            { label: "Keywords (AR)", name: "seo_keywords_ar", placeholder: "تخفيضات, عروض, خصم" }
+                            { label: t("SEOTitleEn"), name: "seo_title_en" },
+                            { label: t("SEOTitleAr"), name: "seo_title_ar" },
+                            { label: t("SEODescEn"), name: "seo_description_en", area: true },
+                            { label: t("SEODescAr"), name: "seo_description_ar", area: true },
+                            { label: t("Keywords") + " (EN)", name: "seo_keywords_en", placeholder: t("KeywordsOfferPlaceholder") },
+                            { label: t("Keywords") + " (AR)", name: "seo_keywords_ar", placeholder: t("KeywordsOfferPlaceholder") }
                         ].map((seo) => (
                             <div key={seo.name} className={`space-y-2 ${seo.area ? 'md:col-span-2' : ''}`}>
                                 <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
                                     {seo.label}
                                 </Label>
                                 {seo.area ? (
-                                    <Textarea {...register(seo.name)} className="h-24 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm" />
+                                    <Textarea {...register(seo.name as any)} className="h-24 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm" />
                                 ) : (
                                     <Input
-                                        {...register(seo.name)}
+                                        {...register(seo.name as any)}
                                         placeholder={seo.placeholder}
                                         className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm"
                                     />

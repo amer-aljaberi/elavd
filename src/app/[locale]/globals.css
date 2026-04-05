@@ -150,4 +150,12 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-primary/20;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
