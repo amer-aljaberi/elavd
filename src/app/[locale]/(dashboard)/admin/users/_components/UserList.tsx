@@ -73,15 +73,15 @@ export default function UserList() {
                 .eq('id', editUser.id);
 
             if (updateError) {
-                toast.error("Update failed", { description: updateError.message });
+                toast.error(tDashboard("UpdateFailed"), { description: updateError.message });
             } else {
-                toast.success("User updated successfully");
+                toast.success(tDashboard("UpdateSuccess"));
                 setEditUser(null);
                 reset();
                 fetchUsers();
             }
         } catch (err: any) {
-            toast.error("Failed to update user", { description: err.message });
+            toast.error(tDashboard("FailedToUpdateUser"), { description: err.message });
         } finally {
             setUpdating(false);
         }
@@ -89,7 +89,7 @@ export default function UserList() {
 
     const headers = [
         tDashboard("Email"),
-        "Name",
+        tDashboard("Name"),
         tDashboard("Role"),
         tDashboard("CreatedAt"),
         tDashboard("Actions")
@@ -105,11 +105,11 @@ export default function UserList() {
         <div className="space-y-4">
             <div className="flex justify-between items-center px-4 py-2 bg-muted/20 rounded-2xl border border-primary/5">
                 <p className="text-sm font-bold text-muted-foreground">
-                    Total: <span className="text-foreground">{users.length}</span>
+                    {tDashboard("TotalCount")}: <span className="text-foreground">{users.length}</span>
                 </p>
                 <Button variant="ghost" size="sm" onClick={fetchUsers} className="text-xs font-bold hover:text-primary">
                     <RefreshCcw className="h-3 w-3 mr-2" />
-                    Refresh
+                    {tDashboard("Refresh")}
                 </Button>
             </div>
 
@@ -160,11 +160,11 @@ export default function UserList() {
                     <div className="space-y-2">
                         <label className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                             <NameIcon className="h-3 w-3" />
-                            Name
+                            {tDashboard("Name")}
                         </label>
                         <Input 
                             {...register("name")}
-                            placeholder="User full name"
+                            placeholder={tDashboard("UserNamePlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
                     </div>
@@ -177,7 +177,7 @@ export default function UserList() {
                         <Input 
                             {...register("email")}
                             type="email"
-                            placeholder="Email address"
+                            placeholder={tDashboard("EmailPlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
                     </div>
@@ -185,15 +185,15 @@ export default function UserList() {
                     <div className="space-y-4">
                         <label className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                             <Lock className="h-3 w-3" />
-                            Password
+                            {tDashboard("Password")}
                         </label>
                         <Input 
                             {...register("password")}
                             type="password"
-                            placeholder="Leave empty to keep current password"
+                            placeholder={tDashboard("PasswordPlaceholder")}
                             className="bg-muted/30 border-none rounded-xl"
                         />
-                        <p className="text-[10px] text-muted-foreground italic">If you provide a new password, it will be updated.</p>
+                        <p className="text-[10px] text-muted-foreground italic">{tDashboard("PasswordHint")}</p>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-6 border-t border-primary/5">

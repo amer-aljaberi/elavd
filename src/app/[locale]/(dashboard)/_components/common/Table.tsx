@@ -29,7 +29,7 @@ export function DashboardTable({ headers, children, className, isLoading, emptyM
           <TableHeader className="bg-foreground/[0.03]">
             <TableRow className="hover:bg-transparent border-border/60">
               {headers.map((header, index) => (
-                <TableHead key={index} className="text-[10px] sm:text-[11px] uppercase font-semibold tracking-wide text-muted-foreground py-2 sm:py-3">
+                <TableHead key={index} className="text-[10px] ltr:text-left rtl:text-right sm:text-[11px] uppercase font-semibold tracking-wide text-muted-foreground py-2 sm:py-3">
                   {header}
                 </TableHead>
               ))}

@@ -70,7 +70,7 @@ export default function ProductList() {
 
         if (error) {
             console.error("Error fetching products:", error);
-            toast.error("Failed to load products");
+            toast.error(t("FailedLoadProducts"));
         } else {
             setProducts(data || []);
             if (count) {
@@ -101,7 +101,7 @@ export default function ProductList() {
         setIsEditOpen(false);
         setIsDeleteOpen(false);
         fetchProducts();
-        toast.success("Done!");
+        toast.success(t("Done"));
     };
 
     return (
@@ -214,7 +214,7 @@ export default function ProductList() {
                 isOpen={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
                 title={selectedProduct ? t("EditProduct") : t("AddProduct")}
-                description={selectedProduct ? (isAr ? selectedProduct.name_ar : selectedProduct.name_en) : "Fill the form to add a new product."}
+                description={selectedProduct ? (isAr ? selectedProduct.name_ar : selectedProduct.name_en) : t("AddProductDescription")}
                 footer={
                     <div className="flex items-center gap-2">
                         <Button

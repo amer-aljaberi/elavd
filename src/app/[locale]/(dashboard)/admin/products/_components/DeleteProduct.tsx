@@ -29,11 +29,11 @@ export default function DeleteProduct({ isOpen, onClose, onSuccess, product }: D
                 .eq('id', product.id);
 
             if (error) throw error;
-            toast.success("Product deleted permanently!");
+            toast.success(t("DeleteSuccess"));
             onSuccess();
         } catch (error: any) {
             console.error("Error deleting product:", error);
-            toast.error("Failed to delete product", { description: error.message });
+            toast.error(t("DeleteFailed"), { description: error.message });
         } finally {
             setLoading(false);
         }
@@ -52,7 +52,7 @@ export default function DeleteProduct({ isOpen, onClose, onSuccess, product }: D
                     </Button>
                     <Button variant="default" onClick={handleDelete} disabled={loading}>
                         {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                        <span className="ml-2">Delete</span>
+                        <span className="ml-2">{t("Delete")}</span>
                     </Button>
                 </div>
             }

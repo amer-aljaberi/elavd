@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw, Megaphone, Calendar, Link as LinkIcon, Layers } from "lucide-react";
+import TextEditor from "@/components/TextEditor";
 
 interface OfferFormProps {
     initialData?: any;
@@ -34,7 +35,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const { register, handleSubmit, setValue, watch } = useForm({
+    const { register, handleSubmit, setValue, watch, control } = useForm({
         defaultValues: initialData || {
             type: "both",
             title_en: "",
@@ -189,9 +190,16 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                         <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
                                             {area.label}
                                         </Label>
-                                        <Textarea
-                                            {...register(area.name)}
-                                            className={`rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border p-4 font-medium text-sm leading-relaxed custom-scrollbar ${area.h}`}
+                                        <Controller
+                                            control={control}
+                                            name={area.name}
+                                            render={({ field }) => (
+                                                <TextEditor
+                                                    value={field.value}
+                                                    onChange={(text, html) => field.onChange(html)}
+                                                    dir={area.name.endsWith("_ar") ? "rtl" : "ltr"}
+                                                />
+                                            )}
                                         />
                                     </div>
                                 ))}
