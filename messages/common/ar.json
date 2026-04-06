@@ -84,7 +84,11 @@
     "PriceHighLow": "السعر: من الأعلى للأقل",
     "PageNotFound": "الصفحة غير موجودة",
     "PageNotFoundDescription": "عذراً! الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
-    "BackToHome": "العودة للرئيسية"
+    "BackToHome": "العودة للرئيسية",
+    "CallUs": "اتصل بنا",
+    "NoDescription": "لا يوجد وصف متاح لهذا المنتج حالياً.",
+    "NoSpecifications": "سيتم إضافة المواصفات قريباً.",
+    "RelatedProducts": "منتجات ذات صلة"
   },
   "contact": {
     "title": "تواصل معنا",

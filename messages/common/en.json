@@ -84,7 +84,11 @@
     "PriceHighLow": "Price: High to Low",
     "PageNotFound": "Page Not Found",
     "PageNotFoundDescription": "Oops! The page you are looking for doesn't exist or has been moved.",
-    "BackToHome": "Back to Home"
+    "BackToHome": "Back to Home",
+    "CallUs": "Call us",
+    "NoDescription": "No description available for this product yet.",
+    "NoSpecifications": "Specifications will be added soon.",
+    "RelatedProducts": "Related Products"
   },
   "contact": {
     "title": "Contact Us",
