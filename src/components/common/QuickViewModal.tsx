@@ -135,7 +135,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                                         {fullDesc || shortDesc}
                                     </div>
                                     <Link
-                                        href={`/products/${product.id}`}
+                                        href={`/product/${product.slug_en}`}
                                         className="text-[#f38d38] font-bold text-xs flex items-center gap-1 hover:underline underline-offset-4 group transition-all"
                                     >
                                         {t('ViewFullDetails')}

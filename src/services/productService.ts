@@ -72,3 +72,34 @@ export async function getRelatedProducts(product: Product, limit: number = 4) {
     const prods = await getProducts({ categoryId: product.category_id, limit: Math.max(limit + 1, 8) });
     return prods.filter((p) => p.id !== product.id).slice(0, limit);
 }
+
+export async function searchProducts({
+    query,
+    categoryId,
+    limit = 10
+}: {
+    query: string;
+    categoryId?: string;
+    limit?: number;
+}) {
+    let supabaseQuery = supabaseBrowser.from('products').select('*');
+
+    if (categoryId) {
+        supabaseQuery = supabaseQuery.eq('category_id', categoryId);
+    }
+
+    if (query) {
+        supabaseQuery = supabaseQuery.or(`name_en.ilike.%${query}%,name_ar.ilike.%${query}%`);
+    }
+
+    const { data, error } = await supabaseQuery
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+    if (error) {
+        console.error('Error searching products:', error);
+        return [];
+    }
+
+    return (data || []) as Product[];
+}

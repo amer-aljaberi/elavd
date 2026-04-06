@@ -88,7 +88,17 @@
     "CallUs": "اتصل بنا",
     "NoDescription": "لا يوجد وصف متاح لهذا المنتج حالياً.",
     "NoSpecifications": "سيتم إضافة المواصفات قريباً.",
-    "RelatedProducts": "منتجات ذات صلة"
+    "RelatedProducts": "منتجات ذات صلة",
+    "SearchProducts": "البحث عن المنتجات",
+    "Searching": "جاري البحث",
+    "TopResults": "أفضل النتائج",
+    "ViewAll": "عرض الكل",
+    "SAR": "ر.س",
+    "ShowAllResultsFor": "عرض كل النتائج لـ",
+    "NoResultsFound": "لم يتم العثور على نتائج",
+    "TryDifferentKeywords": "جرب كلمات بحث مختلفة",
+    "AllCategories": "كل الأقسام",
+    "SearchPlaceholder": "عما تبحث؟"
   },
   "contact": {
     "title": "تواصل معنا",

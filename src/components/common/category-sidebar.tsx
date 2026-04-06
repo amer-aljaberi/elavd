@@ -29,8 +29,8 @@ export default function CategorySidebar({ categories, featuredProducts, activeSl
         <div className="divide-y divide-gray-50">
           {categories.map((category) => {
             const name = locale === 'ar' ? category.name_ar : category.name_en
-            const slug = (locale === 'ar' ? category.slug_ar : category.slug_en) || category.id
-            const isActive = activeSlug === slug || activeSlug === category.slug_en || activeSlug === category.slug_ar
+            const slug = category.slug_en || category.id
+            const isActive = activeSlug === slug || activeSlug === category.slug_ar
 
             return (
               <Link
@@ -63,7 +63,7 @@ export default function CategorySidebar({ categories, featuredProducts, activeSl
         <div className="p-4 space-y-4">
           {featuredProducts.map((product) => {
             const name = locale === 'ar' ? product.name_ar : product.name_en
-            const slug = (locale === 'ar' ? product.slug_ar : product.slug_en) || product.id
+            const slug = product.slug_en || product.id
 
             return (
               <Link

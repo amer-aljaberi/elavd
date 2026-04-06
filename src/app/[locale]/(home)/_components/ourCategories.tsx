@@ -7,7 +7,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import { Layers } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getCategories, getFeaturedProducts, type Category, type Product } from '@/services/home';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 export default function ourCategories() {
     const t = useTranslations('common');
@@ -94,7 +94,7 @@ export default function ourCategories() {
                                                 </div>
 
                                               
-                                               <Link href={`/${locale}/product-category/${locale === 'ar' ? cat.slug_ar : cat.slug_en}`}>
+                                               <Link href={`/product-category/${cat.slug_en}`}>
                                                 <h3 className="text-center font-extrabold line-clamp-1 text-[#1a1a1a] text-lg mb-6 leading-tight">
                                                     {loading ? (
                                                         <span className="block h-4 w-32 bg-gray-100 rounded animate-pulse mx-auto" />
@@ -103,7 +103,7 @@ export default function ourCategories() {
                                                     )}
                                                 </h3>
                                                 </Link>
-                                                <Link href={`/${locale}/product-category/${locale === 'ar' ? cat.slug_ar : cat.slug_en}`} className=' py-2.5 px-3'>
+                                                <Link href={`/product-category/${cat.slug_en}`} className=' py-2.5 px-3'>
                                                  <button
                                                     type="button"
                                                     className="w-full py-2.5 px-3 cursor-pointer rounded-md bg-[#fbb034] text-white font-bold text-sm hover:bg-[#e9a12c] transition-colors shadow-sm"
@@ -125,8 +125,8 @@ export default function ourCategories() {
                             </div>
                             <div className="divide-y divide-gray-100 min-h-[385px]">
                                 {(loading ? Array.from({ length: 4 }) : featuredProducts).map((prod: any, i) => (
-                                    <div key={prod?.id ?? i} className="flex items-center   gap-4 p-5 hover:bg-gray-50 transition-colors">
-                                                                              <div className="relative h-16 w-16 bg-white overflow-hidden border border-gray-100 flex-shrink-0">
+                                    <Link href={`/product/${prod?.slug_en}`} key={prod?.id ?? i} className="flex items-center gap-4 p-5 hover:bg-gray-50 transition-colors">
+                                        <div className="relative h-16 w-16 bg-white overflow-hidden border border-gray-100 flex-shrink-0">
                                             {loading || !prod?.image_url ? (
                                                 <div className="h-full w-full grid place-items-center bg-gray-50">
                                                     <Layers className="h-6 w-6 text-gray-300" />
@@ -149,7 +149,7 @@ export default function ourCategories() {
                                                 {loading ? <div className="h-4 w-32 bg-gray-100 rounded animate-pulse mx-auto" /> : ((locale === 'ar' ? prod.slug_ar : prod.slug_en)?.substring(0, 10).toUpperCase() || 'PROD')}
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>

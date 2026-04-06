@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                             <h4 className="text-gray-400 font-bold text-xs uppercase tracking-widest font-cairo">
                                 {t('CategoryMetalSafes')}
                             </h4>
-                            <Link href={`/product/${localizedSlug}`} className="text-xl md:text-2xl font-black text-[#1a1a1a] font-cairo leading-tight">
+                            <Link href={`/product/${slug_en}`} className="text-xl md:text-2xl font-black text-[#1a1a1a] font-cairo leading-tight">
                                 {name || '—'}
                             </Link>
 
@@ -207,7 +207,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                 <div className="relative h-60 w-full mb-6 flex items-center justify-center bg-white overflow-hidden shrink-0">
                     {main_image ? (
                         <div className="relative size-44">
-                            <Link href={`/product/${localizedSlug}`} >
+                            <Link href={`/product/${slug_en}`} >
                                 <Image
                                     src={main_image}
                                     alt={name || 'Product'}
@@ -224,7 +224,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                 </div>
 
                 <div className="flex flex-col items-center text-center flex-1">
-                    <Link href={`/product/${localizedSlug}`} >
+                    <Link href={`/product/${slug_en}`} >
                         <h3 className="text-[#1a1a1a] font-bold text-base line-clamp-1 mb-1 font-cairo">
                             {name || '—'}
                         </h3>
