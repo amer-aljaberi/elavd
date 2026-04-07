@@ -87,14 +87,9 @@ export default function LogoSection({ setSearchOpen, setMenuOpen }: LogoSectionP
     e?.preventDefault()
     if (!searchTerm.trim()) return
 
-    const searchParams = new URLSearchParams()
-    searchParams.set('s', searchTerm)
-    searchParams.set('post_type', 'product')
-    searchParams.set('product_cat', String(selectedCategory?.id || 0))
-    
-    // Explicitly navigate and reset input
-    const url = `/?${searchParams.toString()}`
-    window.location.href = url
+    // Redirect to slug-based store search
+    const categoryParam = selectedCategory ? `?product_cat=${selectedCategory.id}` : ''
+    router.push(`/store/${encodeURIComponent(searchTerm)}${categoryParam}`)
     setSearchTerm('')
   }
 

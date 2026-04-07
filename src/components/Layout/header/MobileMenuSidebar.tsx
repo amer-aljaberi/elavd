@@ -74,7 +74,7 @@ export default function MobileMenuSidebar({ menuOpen, setMenuOpen, navLinks, cat
           {categories.map(cat => (
             <Link
               key={cat.id}
-              href={`/product-category/${cat.slug_en}`}
+              href={`/store/${cat.slug_en}`}
               className="flex items-center gap-3 px-4 py-3 text-[14px] font-semibold text-slate-700 hover:bg-primary/5 hover:text-primary transition-colors group"
             >
               <Tag className="w-5 h-5 text-primary" />

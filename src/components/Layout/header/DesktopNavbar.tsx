@@ -20,7 +20,7 @@ export default function DesktopNavbar({ navLinks, categories }: DesktopNavbarPro
   const locale = useLocale()
 
   return (
-    <div className="bg-white px-4 shadow-xl border-t border-white/5 h-[50px] flex items-center overflow-hidden">
+    <div className="bg-white px-4 shadow-md border-t border-white/5 h-[50px] flex items-center overflow-hidden">
       <div className="max-w-7xl mx-auto flex items-center justify-between w-full">
         <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           <nav className="flex items-center gap-1">

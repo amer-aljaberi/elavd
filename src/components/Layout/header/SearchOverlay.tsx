@@ -80,14 +80,9 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
   const handleSearchRedirect = (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!searchTerm.trim()) return
-
-    const searchParams = new URLSearchParams()
-    searchParams.set('s', searchTerm)
-    searchParams.set('post_type', 'product')
-    searchParams.set('product_cat', String(selectedCategory?.id || 0))
-    
-    // Use full redirect to ensure search page state is correctly picked up
-    window.location.href = `/?${searchParams.toString()}`
+ 
+    const categoryParam = selectedCategory ? `?product_cat=${selectedCategory.id}` : ''
+    router.push(`/store/${encodeURIComponent(searchTerm)}${categoryParam}`)
     setSearchOpen(false)
   }
 
@@ -118,7 +113,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
           </div>
           <button
             onClick={() => setSearchOpen(false)}
-            className="p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
+            className="p-2 cursor-pointer rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
             aria-label="Close search"
           >
             <X className="w-5 h-5" />
@@ -129,8 +124,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
           <form 
             onSubmit={handleSearchRedirect}
             className="flex h-[52px] border-2 border-slate-200 focus-within:border-primary rounded-xl focus-within:ring-4 focus-within:ring-primary/10 transition-all relative"
-          >
-            {/* Category Dropdown */}
+          > 
             <div className="relative z-[120]" ref={catMenuRef}>
               <div 
                 onClick={() => setShowCatMenu(!showCatMenu)}
@@ -148,7 +142,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                     initial={{ opacity: 0, scale: 0.95, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-100 z-[110] py-2 overflow-hidden"
+                    className="absolute top-full left-0 mt-2 w-72 bg-white rounded-md shadow-md border border-slate-100 z-[110] py-2 overflow-hidden"
                   >
                     <button
                       type="button"
@@ -156,7 +150,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                         setSelectedCategory(null)
                         setShowCatMenu(false)
                       }}
-                      className={`w-full px-4 py-2.5 text-start text-sm hover:bg-primary/5 transition-colors flex items-center gap-2 ${!selectedCategory ? 'text-primary font-bold' : 'text-slate-600'}`}
+                      className={`w-full cursor-pointer px-4 py-2.5 text-start text-sm hover:bg-primary/5 transition-colors flex items-center gap-2 ${!selectedCategory ? 'text-primary font-bold' : 'text-slate-600'}`}
                     >
                       <Tag className="w-4 h-4" />
                       {t('AllCategories')}
@@ -170,7 +164,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                           setSelectedCategory(cat)
                           setShowCatMenu(false)
                         }}
-                        className={`w-full px-4 py-2.5 text-start text-sm hover:bg-primary/5 transition-colors flex items-center gap-3 ${selectedCategory?.id === cat.id ? 'text-primary font-bold bg-primary/5' : 'text-slate-600'}`}
+                        className={`w-full cursor-pointer px-4 py-2.5 text-start text-sm hover:bg-primary/5 transition-colors flex items-center gap-3 ${selectedCategory?.id === cat.id ? 'text-primary font-bold bg-primary/5' : 'text-slate-600'}`}
                       >
                         <div className="w-8 h-8 rounded-lg bg-slate-50 overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center">
                           {cat.image_url ? (
@@ -202,7 +196,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
             <button 
               type="submit"
               disabled={loading}
-              className="bg-primary px-6 flex items-center justify-center text-white hover:bg-primary/90 transition-all disabled:opacity-80 active:scale-95 rounded-e-[9px]"
+              className="bg-primary cursor-pointer px-6 flex items-center justify-center text-white hover:bg-primary/90 transition-all disabled:opacity-80 active:scale-95 rounded-e-[9px]"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -230,7 +224,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                   <div className="p-2">
                     <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
                       <span>{t('TopResults')} ({results.length})</span>
-                      <Link href={`/search?q=${searchTerm}`} className="text-primary hover:underline" onClick={() => setSearchOpen(false)}>
+                      <Link href={`/store/${searchTerm}`} className="text-primary hover:underline" onClick={() => setSearchOpen(false)}>
                         {t('ViewAll')}
                       </Link>
                     </div>
@@ -238,7 +232,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                       {results.map((product) => (
                         <Link
                           key={product.id}
-                          href={`/products/${(locale === 'ar' ? product.slug_ar : product.slug_en) || product.id}`}
+                          href={`/product/${(locale === 'ar' ? product.slug_ar : product.slug_en) || product.id}`}
                           onClick={() => setSearchOpen(false)}
                           className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-all group border border-transparent hover:border-slate-100"
                         >
@@ -280,7 +274,7 @@ export default function SearchOverlay({ searchOpen, setSearchOpen, searchInputRe
                     </div>
                     <button
                       onClick={handleSearchRedirect}
-                      className="w-full mt-2 py-3 bg-slate-50 text-slate-600 text-xs font-bold hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2 rounded-xl"
+                      className="w-full cursor-pointer mt-2 py-3 bg-slate-50 text-slate-600 text-xs font-bold hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2 rounded-xl"
                     >
                       {t('ShowAllResultsFor')} "{searchTerm}"
                       <ChevronRight className="w-4 h-4" />

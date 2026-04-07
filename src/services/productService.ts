@@ -19,6 +19,12 @@ export type Product = {
     is_active?: boolean;
     created_at?: string;
     category_id?: string;
+    category?: {
+        id: string;
+        name_en: string | null;
+        name_ar: string | null;
+        slug: string | null;
+    }
 };
 
 export async function getProductBySlug(slug: string) {
@@ -31,7 +37,7 @@ export async function getProductBySlug(slug: string) {
 
     const { data, error } = await supabaseBrowser
         .from('products')
-        .select('*')
+        .select('*, category:categories(*)')
         .or(filter)
         .limit(1);
 

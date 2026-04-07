@@ -35,7 +35,7 @@ export default function CategorySidebar({ categories, featuredProducts, activeSl
             return (
               <Link
                 key={category.id}
-                href={`/product-category/${slug}`}
+                href={`/store/${slug}`}
                 className={`flex items-center justify-between px-6 py-4 transition-colors hover:bg-gray-50 group ${
                   isActive ? 'bg-orange-50 text-[#f38d38]' : 'text-gray-600'
                 }`}

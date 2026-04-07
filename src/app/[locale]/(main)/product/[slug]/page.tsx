@@ -56,11 +56,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
   ]);
 
   const name = isRtl ? product.name_ar : product.name_en;
+  const categoryName = product.category 
+    ? (isRtl ? product.category.name_ar : product.category.name_en) 
+    : t("Store");
+  const categorySlug = product.category?.slug || "";
+  const categoryHref = product.category ? `/store/${categorySlug}` : "/store";
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20" dir={isRtl ? "rtl" : "ltr"}>
-      <PageHeader title={name || t("Products")} icon={<Layers size={28} />} />
-
+      <PageHeader 
+        title={name || t("Products")} 
+        parent={{ 
+           label: categoryName || t("Store"), 
+           href: categoryHref 
+        }} 
+      />
       <div className="max-w-7xl mx-auto px-4 mt-12 lg:mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 

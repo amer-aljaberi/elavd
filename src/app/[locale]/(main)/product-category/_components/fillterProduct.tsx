@@ -99,26 +99,38 @@ export default function FilterProduct({
  
             {/* Sorting Dropdown */}
             <div className="relative group z-[999]">
-               <button className="flex items-center cursor-pointer shadow-none gap-3 text-[13px] font-bold text-[#1a1a1a] font-cairo border-b border-transparent hover:border-gray-200 pb-1 px-1 transition-all">
-                  <ChevronDown size={14} className="text-gray-400 group-hover:translate-y-0.5 transition-transform" />
-                  {t('DefaultSorting')}
-               </button>
-               <div className="absolute top-full mt-2 ltr:right-0 rtl:left-0 bg-white shadow-2xl rounded-xl border border-gray-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 min-w-[180px]">
-                  {[
-                    { val: 'default', key: 'DefaultSorting' },
-                    { val: 'newest', key: 'Newest' },
-                    { val: 'price-low', key: 'PriceLowHigh' },
-                    { val: 'price-high', key: 'PriceHighLow' }
-                  ].map((sort) => (
-                    <button 
-                       key={sort.val}
-                       onClick={() => updateParams('sort', sort.val)}
-                       className="w-full cursor-pointer text-start px-4 py-2 hover:bg-gray-50 rounded-lg text-xs font-semibold font-cairo text-gray-600 hover:text-[#f38d38] transition-colors"
-                    >
-                       {t(sort.key)}
+               {(() => {
+                 const currentSort = searchParams.get('sort') || 'default'
+                 const options = [
+                   { val: 'default', key: 'DefaultSorting' },
+                   { val: 'newest', key: 'Newest' },
+                   { val: 'price-low', key: 'PriceLowHigh' },
+                   { val: 'price-high', key: 'PriceHighLow' }
+                 ]
+                 const activeOption = options.find(o => o.val === currentSort) || options[0]
+                 
+                 return (
+                   <>
+                    <button className="flex items-center cursor-pointer shadow-none gap-3 text-[13px] font-semibold text-[#1a1a1a] font-cairo border-b border-transparent hover:border-gray-200 pb-1 px-1 transition-all">
+                        <ChevronDown size={14} className="text-gray-400 group-hover:translate-y-0.5 transition-transform" />
+                        {t(activeOption.key)}
                     </button>
-                  ))}
-               </div>
+                    <div className="absolute top-full mt-2 ltr:right-0 rtl:left-0 bg-white shadow-2xl rounded-xl border border-gray-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 min-w-[180px]">
+                        {options.map((sort) => (
+                          <button 
+                             key={sort.val}
+                             onClick={() => updateParams('sort', sort.val)}
+                             className={`w-full cursor-pointer text-start px-4 py-2 hover:bg-gray-50 rounded-lg text-xs font-semibold font-cairo transition-colors ${
+                               currentSort === sort.val ? 'text-[#f38d38] bg-orange-50' : 'text-gray-600 hover:text-[#f38d38]'
+                             }`}
+                          >
+                             {t(sort.key)}
+                          </button>
+                        ))}
+                    </div>
+                   </>
+                 )
+               })()}
             </div>
 
           </div>

@@ -10,9 +10,14 @@ interface PageHeaderProps {
   title: string
   subtitle?: string
   icon?: React.ReactNode
+  breadcrumbLabel?: string
+  parent?: {
+    label: string
+    href: string
+  }
 }
 
-export default function PageHeader({ title, subtitle, icon }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, icon, parent, breadcrumbLabel }: PageHeaderProps) {
   const t = useTranslations('common')
   const locale = useLocale()
 
@@ -32,8 +37,18 @@ export default function PageHeader({ title, subtitle, icon }: PageHeaderProps) {
               <Home size={14} />
               {t('Home')}
             </Link>
+            
+            {parent && (
+              <>
+                {locale === 'ar' ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+                <Link href={parent.href} className="hover:text-[#f38d38] transition-colors">
+                  {parent.label}
+                </Link>
+              </>
+            )}
+
             {locale === 'ar' ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
-            <span className="text-[#f38d38] font-bold">{title}</span>
+            <span className="text-[#f38d38] font-bold">{breadcrumbLabel || title}</span>
           </motion.div>
  
           <motion.div
