@@ -93,7 +93,7 @@ export default function Sidebar() {
                 isAr && !isSidebarOpen ? "translate-x-full" : ""
             )}>
                 <div className="p-8 flex items-center justify-between gap-3">
-                    <Image src={logo} alt="Logo" width={170} height={40} className="w-auto h-10 object-contain" />
+                    <Image src={logo} alt="Logo" width={170} height={40} className="w-auto h-14 object-contain" />
                     <Button
                         variant="ghost"
                         size="icon"
