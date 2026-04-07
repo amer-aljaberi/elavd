@@ -32,7 +32,7 @@ export function Header() {
       if (currentScrollY < 10) {
         setIsVisible(true)
       } else if (currentScrollY > lastScrollY.current) {
-        if (currentScrollY > 150) setIsVisible(false)
+        if (currentScrollY > 50) setIsVisible(false)
       } else {
         setIsVisible(true)
       }
@@ -86,10 +86,8 @@ export function Header() {
         >
           <TopInfoBar />
           <LogoSection setMenuOpen={setMenuOpen} setSearchOpen={setSearchOpen} />
-          <DesktopNavbar navLinks={navLinks} categories={categories} />
+          <DesktopNavbar navLinks={navLinks} categories={categories} activePathname={pathname} />
         </div>
-
-        {/* Spacer to prevent content jump (Total height: 38 + 106 + 50 = 194px) */}
         <div className="hidden md:block h-[194px]" />
 
         {/* ── Mobile Section ───────────────────────────────────────────── */}
@@ -98,6 +96,7 @@ export function Header() {
           setMenuOpen={setMenuOpen} 
           setSearchOpen={setSearchOpen} 
         />
+        <div className="md:hidden h-16" />
       </header>
 
       {/* ── Overlays ─────────────────────────────────────────────────── */}
