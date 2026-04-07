@@ -1,15 +1,12 @@
 import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-import { Layers } from "lucide-react";
-
+import { getTranslations } from "next-intl/server"; 
 import PageHeader from "@/components/common/page-header";
 import CategorySidebar from "@/components/common/category-sidebar";
 import ProductHero from "./_components/ProductHero";
 import ProductTabs from "./_components/ProductTabs";
 import RelatedProducts from "./_components/RelatedProducts";
-
 import {
   getCategories,
   getFeaturedProducts,
