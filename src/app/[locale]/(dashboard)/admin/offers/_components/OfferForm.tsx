@@ -33,6 +33,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
     const t = useTranslations("dashboard");
     const [products, setProducts] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
+    const [subCategories, setSubCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, setValue, watch, control } = useForm({
@@ -46,6 +47,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
             link: "",
             product_id: null,
             category_id: null,
+            sub_category_id: null,
             is_active: true,
             position: 0,
             start_date: "",
@@ -64,10 +66,18 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data: prods } = await supabaseBrowser.from('products').select('id, name_en, name_ar');
-            const { data: cats } = await supabaseBrowser.from('categories').select('id, name_en, name_ar');
+            const [
+                { data: prods },
+                { data: cats },
+                { data: subCats }
+            ] = await Promise.all([
+                supabaseBrowser.from('products').select('id, name_en, name_ar'),
+                supabaseBrowser.from('categories').select('id, name_en, name_ar'),
+                supabaseBrowser.from('sub_categories').select('id, name_en, name_ar, category_id')
+            ]);
             if (prods) setProducts(prods);
             if (cats) setCategories(cats);
+            if (subCats) setSubCategories(subCats);
         };
         fetchData();
     }, []);
@@ -92,6 +102,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                 ...data,
                 product_id: data.product_id === "none" ? null : data.product_id,
                 category_id: data.category_id === "none" ? null : data.category_id,
+                sub_category_id: data.sub_category_id === "none" ? null : data.sub_category_id,
                 start_date: data.start_date || null,
                 end_date: data.end_date || null,
                 seo_keywords_en: typeof data.seo_keywords_en === 'string' ? data.seo_keywords_en.split(',').map((k: string) => k.trim()).filter(Boolean) : data.seo_keywords_en,
@@ -147,9 +158,9 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                                 <SelectValue placeholder={t("SelectTypePlaceholder")} />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
-                                                <SelectItem value="both" className="cursor-pointer">{t("OfferTypeBoth")}</SelectItem>
-                                                <SelectItem value="image" className="cursor-pointer">{t("OfferTypeImage")}</SelectItem>
-                                                <SelectItem value="text" className="cursor-pointer">{t("OfferTypeText")}</SelectItem>
+                                                <SelectItem value="both" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("OfferTypeBoth")}</SelectItem>
+                                                <SelectItem value="image" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("OfferTypeImage")}</SelectItem>
+                                                <SelectItem value="text" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("OfferTypeText")}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     )}
@@ -209,7 +220,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
 
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 ring-1 ring-orange-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
                             <LinkIcon className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
@@ -232,9 +243,9 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                             <SelectValue placeholder={t("LinkToProduct")} />
                                         </SelectTrigger>
                                         <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
-                                            <SelectItem value="none" className="cursor-pointer">{t("None")}</SelectItem>
+                                            <SelectItem value="none" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("None")}</SelectItem>
                                             {products.map(p => (
-                                                <SelectItem key={p.id} value={p.id} className="cursor-pointer">{p.name_en}</SelectItem>
+                                                <SelectItem key={p.id} value={p.id} className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{p.name_en}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
@@ -250,18 +261,49 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                                 name="category_id"
                                 control={control}
                                 render={({ field }) => (
-                                    <Select onValueChange={field.onChange} value={field.value || "none"}>
+                                    <Select onValueChange={(val) => { field.onChange(val); setValue("sub_category_id", null); }} value={field.value || "none"}>
                                         <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
                                             <SelectValue placeholder={t("LinkToCategory")} />
                                         </SelectTrigger>
                                         <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
-                                            <SelectItem value="none" className="cursor-pointer">{t("None")}</SelectItem>
+                                            <SelectItem value="none" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("None")}</SelectItem>
                                             {categories.map(c => (
-                                                <SelectItem key={c.id} value={c.id} className="cursor-pointer">{c.name_en}</SelectItem>
+                                                <SelectItem key={c.id} value={c.id} className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{c.name_en}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 )}
+                            />
+                        </div>
+
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("SubCategory")}
+                            </Label>
+                            <Controller
+                                name="sub_category_id"
+                                control={control}
+                                render={({ field }) => {
+                                    const selectedCategoryId = watch("category_id");
+                                    const filteredSubs = subCategories.filter(sc => sc.category_id === selectedCategoryId);
+                                    return (
+                                        <Select 
+                                            onValueChange={field.onChange} 
+                                            value={field.value || "none"}
+                                            disabled={!selectedCategoryId || selectedCategoryId === "none"}
+                                        >
+                                            <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                                <SelectValue placeholder={t("SubCategory")} />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
+                                                <SelectItem value="none" className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{t("None")}</SelectItem>
+                                                {filteredSubs.map(sc => (
+                                                    <SelectItem key={sc.id} value={sc.id} className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">{sc.name_en}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    );
+                                }}
                             />
                         </div>
 
@@ -276,7 +318,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
 
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 ring-1 ring-blue-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
                             <Calendar className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
@@ -303,7 +345,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                             <Switch
                                 checked={watch("is_active")}
                                 onCheckedChange={(val) => setValue("is_active", val)}
-                                className="data-[state=checked]:bg-primary scale-90"
+                                className="data-[state=checked]:bg-secondary scale-90"
                             />
                             <Label className="text-sm font-medium text-muted-foreground"> {t("ActiveStatus")}</Label>
                         </div>
@@ -313,7 +355,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
                 {offerType !== "text" && (
                     <section className="space-y-6">
                         <div className="flex items-center gap-4 transition-all group">
-                            <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 ring-1 ring-purple-500/20 transition-transform">
+                            <div className="h-9 w-9 rounded-lg bg-accent/10 flex items-center justify-center text-accent ring-1 ring-accent/20 transition-transform">
                                 <ImageIcon className="h-5 w-5 stroke-[2]" />
                             </div>
                             <div>
@@ -338,7 +380,7 @@ export default function OfferForm({ initialData, onSuccess, onCancel, formId }: 
 
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 ring-1 ring-green-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary ring-1 ring-secondary/20 transition-transform">
                             <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>

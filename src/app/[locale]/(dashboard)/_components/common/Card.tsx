@@ -6,7 +6,7 @@ import { LucideIcon } from "lucide-react";
 
 interface StatsCardProps {
   title: string;
-  value: string | number;
+  value: React.ReactNode;
   change?: string;
   isIncrease?: boolean;
   icon: LucideIcon;
@@ -33,7 +33,7 @@ export function StatsCard({ title, value, change, isIncrease, icon: Icon, color 
             <div className="flex items-center gap-1.5 mt-2">
               <div className={cn(
                 "px-2 py-0.5 rounded-full text-[11px] font-semibold",
-                isIncrease ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-500/10 text-rose-600"
+                isIncrease ? "bg-secondary/10 text-secondary" : "bg-destructive/10 text-destructive"
               )}>
                 {isIncrease ? "+" : ""}{change}
               </div>

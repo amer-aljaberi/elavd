@@ -45,7 +45,7 @@ const NotFoundPage = () => {
             transition={{ duration: 0.6, type: "spring", damping: 15 }}
             className="relative mb-8"
           >
-            <div className="text-[100px] md:text-[180px] font-black leading-none text-slate-200 dark:text-slate-900/30 select-none tracking-tighter drop-shadow-sm">
+            <div className="text-[100px] md:text-[180px] font-black leading-none text-muted dark:text-accent/30 select-none tracking-tighter drop-shadow-sm">
               404
             </div>
            </motion.div>
@@ -93,7 +93,7 @@ const NotFoundPage = () => {
               variant="outline"
               size="lg"
               onClick={() => window.history.back()}
-              className="w-full sm:w-auto rounded-xl px-8 h-12 text-sm font-bold border-2 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:-translate-y-1 transition-all duration-300"
+              className="w-full sm:w-auto rounded-xl px-8 h-12 text-sm font-bold border-2 bg-transparent hover:bg-muted/50 dark:hover:bg-accent/20 hover:border-border dark:hover:border-border hover:-translate-y-1 transition-all duration-300"
             >
               <ArrowLeft className="w-4 h-4 me-2 rtl:rotate-180" />
               {t('Cancel')}

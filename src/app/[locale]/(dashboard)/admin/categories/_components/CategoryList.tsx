@@ -46,7 +46,7 @@ export default function CategoryList() {
         setLoading(true);
         let query = supabaseBrowser
             .from('categories')
-            .select('*', { count: 'exact' });
+            .select('*, sub_categories(id, name_en, name_ar)', { count: 'exact' });
 
         if (search) {
             query = query.or(`name_en.ilike.%${search}%,name_ar.ilike.%${search}%`);
@@ -150,11 +150,12 @@ export default function CategoryList() {
             <DashboardTable headers={[
                 t("Images"),
                 t("NameEn"),
+                t("SubCategories"),
                 t("Slug"),
                 t("CreatedAt"),
                 t("Actions")
             ]}
-                headerClasses={["", "", "hidden sm:table-cell", "hidden md:table-cell", ""]}
+                headerClasses={["", "", "hidden md:table-cell", "hidden sm:table-cell", "hidden md:table-cell", ""]}
                 isLoading={loading}
                 emptyMessage={t("NoCategoriesFound") || "No categories found."}
             >
@@ -174,6 +175,25 @@ export default function CategoryList() {
                         <DashboardTableCell>
                             <span className="font-semibold tracking-tight text-sm">{isAr ? category.name_ar : category.name_en}</span>
                         </DashboardTableCell>
+                        <DashboardTableCell className="hidden md:table-cell">
+                            <div className="flex flex-wrap gap-1.5 max-w-[250px]">
+                                {(category.sub_categories || []).slice(0, 3).map((sub: any) => (
+                                    <span key={sub.id} className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-md whitespace-nowrap">
+                                        {isAr ? sub.name_ar : sub.name_en}
+                                    </span>
+                                ))}
+                                {category.sub_categories?.length > 3 && (
+                                    <span className="text-[10px] font-bold px-2 py-0.5 bg-muted text-muted-foreground border border-border rounded-md">
+                                        +{category.sub_categories.length - 3}
+                                    </span>
+                                )}
+                                {(!category.sub_categories || category.sub_categories.length === 0) && (
+                                    <span className="text-[10px] font-medium text-muted-foreground italic">
+                                        {t("None")}
+                                    </span>
+                                )}
+                            </div>
+                        </DashboardTableCell>
                         <DashboardTableCell className="hidden sm:table-cell">
                             <span className="text-[10px] uppercase font-medium text-muted-foreground bg-foreground/[0.05] px-3 py-1 rounded-full border border-border/60">
                                 {isAr ? category.slug_ar : category.slug_en}
@@ -189,7 +209,7 @@ export default function CategoryList() {
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(category)} className="h-9 w-9 rounded-full hover:bg-foreground/[0.06] hover:text-foreground transition-all">
                                     <Edit2 className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDelete(category)} className="h-9 w-9 rounded-full hover:bg-rose-500/10 hover:text-rose-600 transition-all">
+                                <Button variant="ghost" size="icon" onClick={() => handleDelete(category)} className="h-9 w-9 rounded-full hover:bg-destructive/10 hover:text-destructive transition-all">
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             </div>

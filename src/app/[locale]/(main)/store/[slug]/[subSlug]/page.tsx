@@ -4,17 +4,19 @@ import { getTranslations } from 'next-intl/server'
 import PageHeader from '@/components/common/page-header'
 import { ProductCard } from '@/components/common/product-card'
 import CategorySidebar from '@/components/common/category-sidebar'
-import { getProducts, getCategories, searchProducts, getCategoryBySlug } from '@/services/home'
+import { getProducts, getCategories, searchProducts } from '@/services/home'
+import { getSubCategoryBySlug } from '@/services/subCategoryService'
 import { Search, PackageX } from 'lucide-react'
-import FilterProduct from '../../product-category/_components/fillterProduct'
-import Pagination from '../../product-category/_components/pagination'
+import FilterProduct from '../../../product-category/_components/fillterProduct'
+import Pagination from '../../../product-category/_components/pagination'
 import Script from 'next/script'
 import { getStoreDynamicJsonLd } from '@/seo/storeDynamic'
 
-interface StoreDynamicPageProps {
+interface SubCategoryPageProps {
   params: Promise<{
     locale: string
     slug: string
+    subSlug: string
   }>,
   searchParams: Promise<{
     page?: string,
@@ -24,28 +26,28 @@ interface StoreDynamicPageProps {
   }>
 }
 
-export async function generateMetadata({ params }: StoreDynamicPageProps): Promise<Metadata> {
-  const { slug, locale } = await params
-  const category = await getCategoryBySlug(slug)
+export async function generateMetadata({ params }: SubCategoryPageProps): Promise<Metadata> {
+  const { subSlug, locale } = await params
+  const subCategory = await getSubCategoryBySlug(subSlug)
   const t = await getTranslations('common')
 
-  if (category) {
-    const name = locale === 'ar' ? category.name_ar : category.name_en
+  if (subCategory) {
+    const name = locale === 'ar' ? subCategory.name_ar : subCategory.name_en
     return {
       title: `${name} | ${t('Store')}`,
-      description: locale === 'ar' ? category.description_ar : category.description_en,
+      description: locale === 'ar' ? subCategory.description_ar : subCategory.description_en,
     }
   }
 
-  const displaySlug = decodeURIComponent(slug).replace(/-/g, ' ')
+  const displaySlug = decodeURIComponent(subSlug).replace(/-/g, ' ')
   return {
     title: `${displaySlug} | ${t('Store')}`,
     description: locale === 'ar' ? `نتائج عن ${displaySlug}` : `Results for ${displaySlug}`,
   }
 }
 
-export default async function StoreDynamicPage({ params, searchParams }: StoreDynamicPageProps) {
-  const { locale, slug } = await params
+export default async function SubCategoryPage({ params, searchParams }: SubCategoryPageProps) {
+  const { locale, slug, subSlug } = await params
   const {
     page = '1',
     sort = 'default',
@@ -59,23 +61,21 @@ export default async function StoreDynamicPage({ params, searchParams }: StoreDy
   const currentPage = parseInt(page)
   const currentLimit = parseInt(limit)
 
-  const [category, allCategories, featuredProducts] = await Promise.all([
-    getCategoryBySlug(slug),
-    getCategories(100),
+  const [subCategory, allCategories, featuredProducts] = await Promise.all([
+    getSubCategoryBySlug(subSlug),
+    getCategories(100), // Fetch all categories to show in sidebar
     getProducts({ is_featured: true, limit: 4 })
   ])
 
   let allProducts = []
   let pageTitle = ''
-  let ValsearchQuery = ''
 
-  if (category) {
-    allProducts = await getProducts({ categoryId: category.id, limit: 1000 })
-    pageTitle = isRtl ? category.name_ar || '' : category.name_en || ''
+  if (subCategory) {
+    allProducts = await getProducts({ subCategoryId: subCategory.id, limit: 1000 })
+    pageTitle = isRtl ? subCategory.name_ar || '' : subCategory.name_en || ''
   } else {
-    const searchQuery = decodeURIComponent(slug).replace(/-/g, ' ')
+    const searchQuery = decodeURIComponent(subSlug).replace(/-/g, ' ')
     allProducts = await searchProducts({ query: searchQuery, limit: 1000 })
-    ValsearchQuery = searchQuery
     pageTitle = isRtl ? `نتائج البحث عن: ${searchQuery}` : `Search results for: ${searchQuery}`
   }
 
@@ -97,17 +97,17 @@ export default async function StoreDynamicPage({ params, searchParams }: StoreDy
 
   return (
     <div className="min-h-screen bg-muted/30 pb-20">
-      <Script id="jsonld-store-dynamic" type="application/ld+json" strategy="afterInteractive">
+      <Script id="jsonld-subcategory" type="application/ld+json" strategy="afterInteractive">
         {JSON.stringify(getStoreDynamicJsonLd(locale, {
-          isCategory: Boolean(category),
-          slug,
+          isCategory: true,
+          slug: subSlug,
           name: pageTitle
         }))}
       </Script>
       <PageHeader
         title={t('Store')}
         parent={{ label: t('Store'), href: '/store' }}
-        breadcrumbLabel={ValsearchQuery}
+        breadcrumbLabel={pageTitle}
         subtitle={pageTitle}
       />
 
@@ -116,16 +116,16 @@ export default async function StoreDynamicPage({ params, searchParams }: StoreDy
 
           <div className="lg:col-span-3 order-2 lg:order-1">
             <CategorySidebar
-              categories={allCategories}
+              categories={allCategories as any}
               featuredProducts={featuredProducts}
-              activeSlug={category ? slug : ""}
+              activeSlug={subSlug}
             />
           </div>
 
           <div className="lg:col-span-9 order-1 lg:order-2 space-y-8">
 
             <FilterProduct
-              categoryName={ValsearchQuery}
+              categoryName={pageTitle}
               totalItems={totalItems}
               currentView={view}
             />

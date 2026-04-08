@@ -17,6 +17,7 @@ import {
 import {
     DashboardHeader
 } from "@/app/[locale]/(dashboard)/_components/common/DashboardHeader";
+import { Price } from "@/app/[locale]/(dashboard)/_components/common/Price";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -101,9 +102,9 @@ export default function OrderList() {
 
     const getStatusStyle = (status: string) => {
         switch (status) {
-            case 'pending': return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
-            case 'shipped': return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
-            case 'delivered': return 'bg-green-500/10 text-green-600 border-green-500/20';
+            case 'pending': return 'bg-primary/10 text-primary border-primary/20';
+            case 'shipped': return 'bg-accent/10 text-accent border-accent/20';
+            case 'delivered': return 'bg-secondary/10 text-secondary border-secondary/20';
             default: return 'bg-muted/30 text-muted-foreground border-transparent';
         }
     };
@@ -193,7 +194,7 @@ export default function OrderList() {
                                     href={`https://wa.me/${order.customer_phone.replace(/\+/g, '')}`} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-1.5 text-xs font-bold text-green-600 hover:text-green-700 bg-green-50 px-3 py-1.5 rounded-lg transition-colors w-fit"
+                                    className="flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-secondary/80 bg-secondary/5 px-3 py-1.5 rounded-lg transition-colors w-fit"
                                 >
                                     <MessageSquare className="h-3 w-3" />
                                     {order.customer_phone}
@@ -203,7 +204,7 @@ export default function OrderList() {
                             )}
                         </DashboardTableCell>
                         <DashboardTableCell>
-                            <span className="font-bold text-primary font-mono">${order.total?.toFixed(2)}</span>
+                            <span className="font-bold text-primary font-mono"><Price amount={order.total} /></span>
                         </DashboardTableCell>
                         <DashboardTableCell className="hidden sm:table-cell">
                             <div className={`flex items-center gap-2 px-3 py-1 rounded-xl border border-dashed font-bold text-[10px] uppercase w-fit ${getStatusStyle(order.status)}`}>

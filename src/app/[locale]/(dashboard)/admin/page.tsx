@@ -6,7 +6,8 @@ import { StatsCard, DashboardCard } from '@/app/[locale]/(dashboard)/_components
 import { DashboardTable, DashboardTableRow, DashboardTableCell } from '@/app/[locale]/(dashboard)/_components/common/Table';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { DashboardHeader } from '@/app/[locale]/(dashboard)/_components/common/DashboardHeader';
-import { Package, ShoppingCart, Users, DollarSign, Calendar, User as UserIcon, RefreshCw, Tag } from 'lucide-react';
+import { Package, ShoppingCart, Users, SaudiRiyal, Calendar, User as UserIcon, RefreshCw, Tag, Layers } from 'lucide-react';
+import { Price } from '@/app/[locale]/(dashboard)/_components/common/Price';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +19,8 @@ export default function AdminDashboardPage() {
         orders: 0,
         users: 0,
         revenue: 0,
-        activeOffers: 0
+        activeOffers: 0,
+        subCategories: 0
     });
     const [recentOrders, setRecentOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -30,12 +32,14 @@ export default function AdminDashboardPage() {
                 { count: productsCount }, 
                 { count: ordersCount }, 
                 { count: usersCount },
-                { count: offersCount }
+                { count: offersCount },
+                { count: subCategoriesCount }
             ] = await Promise.all([
                 supabaseBrowser.from('products').select('*', { count: 'exact', head: true }),
                 supabaseBrowser.from('orders').select('*', { count: 'exact', head: true }),
                 supabaseBrowser.from('profiles').select('*', { count: 'exact', head: true }),
                 supabaseBrowser.from('offers').select('*', { count: 'exact', head: true }).eq('is_active', true),
+                supabaseBrowser.from('sub_categories').select('*', { count: 'exact', head: true }),
             ]);
 
             const { data: revenueAgg } = await supabaseBrowser
@@ -57,7 +61,8 @@ export default function AdminDashboardPage() {
                 orders: ordersCount || 0,
                 users: usersCount || 0,
                 revenue,
-                activeOffers: offersCount || 0
+                activeOffers: offersCount || 0,
+                subCategories: subCategoriesCount || 0
             });
             setRecentOrders(latest || []);
         } finally {
@@ -125,9 +130,16 @@ export default function AdminDashboardPage() {
                 />
                 <StatsCard 
                     title={t('RecentRevenue')} 
-                    value={loading ? '—' : `$${stats.revenue.toLocaleString()}`} 
-                    icon={DollarSign}
+                    value={loading ? '—' : <Price amount={stats.revenue} iconClassName='w-7 h-7'/>} 
+                    icon={SaudiRiyal}
                     change="24%"
+                    isIncrease={true}
+                />
+                <StatsCard 
+                    title={t('SubCategories')} 
+                    value={loading ? '—' : stats.subCategories} 
+                    icon={Layers}
+                    change="8.2%"
                     isIncrease={true}
                 />
             </div>
@@ -173,7 +185,9 @@ export default function AdminDashboardPage() {
                                     </span>
                                 </DashboardTableCell>
                                 <DashboardTableCell>
-                                    <span className="font-black font-mono text-sm tracking-tighter">${(order.total_amount || 0).toFixed(2)}</span>
+                                    <span className="font-black font-mono text-sm tracking-tighter">
+                                        <Price amount={order.total_amount || 0} />
+                                    </span>
                                 </DashboardTableCell>
                                 <DashboardTableCell>
                                     <span className="text-xs text-muted-foreground font-semibold flex items-center gap-1.5">
@@ -193,6 +207,7 @@ export default function AdminDashboardPage() {
                              {[
                                 { icon: ShoppingCart, label: t('TotalOrders'), val: stats.orders, color: 'text-amber-500 bg-amber-500/10' },
                                 { icon: Package, label: t('TotalProducts'), val: stats.products, color: 'text-blue-500 bg-blue-500/10' },
+                                { icon: Layers, label: t('SubCategories'), val: stats.subCategories, color: 'text-purple-500 bg-purple-500/10' },
                                 { icon: Tag, label: t('TotalOffers'), val: stats.activeOffers, color: 'text-emerald-500 bg-emerald-500/10' },
                              ].map((item, i) => (
                                 <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-foreground/[0.02] border border-border/40 hover:bg-foreground/[0.04] transition-all">

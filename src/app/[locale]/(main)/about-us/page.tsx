@@ -24,22 +24,22 @@ export default function AboutUsPage() {
         {
             title: t('whyChooseUs.item1Title'),
             desc: t('whyChooseUs.item1Desc'),
-            icon: <Zap className="text-orange-500" size={28} />
+            icon: <Zap className="text-primary" size={28} />
         },
         {
             title: t('whyChooseUs.item2Title'),
             desc: t('whyChooseUs.item2Desc'),
-            icon: <Users className="text-orange-500" size={28} />
+            icon: <Users className="text-primary" size={28} />
         },
         {
             title: t('whyChooseUs.item3Title'),
             desc: t('whyChooseUs.item3Desc'),
-            icon: <ShieldCheck className="text-orange-500" size={28} />
+            icon: <ShieldCheck className="text-primary" size={28} />
         },
     ];
 
     return (
-        <div className="min-h-screen bg-white pb-20 overflow-hidden">
+        <div className="min-h-screen bg-background pb-20 overflow-hidden">
             <Script id="jsonld-about" type="application/ld+json" strategy="afterInteractive">
                 {JSON.stringify(getAboutJsonLd(locale))}
             </Script>
@@ -52,7 +52,7 @@ export default function AboutUsPage() {
             <div className="max-w-7xl mx-auto px-4 mt-16 lg:mt-20">
                 {/* Story Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24 lg:mb-32">
-                    <div className="relative h-[400px] lg:h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl group border border-gray-100">
+                    <div className="relative h-[400px] lg:h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl group border border-border">
                         <Image
                             src={require('@/assets/banner-1.png')}
                             alt="About DUBAI NETWORK IT EST"
@@ -72,14 +72,14 @@ export default function AboutUsPage() {
 
                     <div className="space-y-8">
                         <div className="space-y-5">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#f38d38]/10 text-[#f38d38] rounded-full text-[10px] font-black uppercase tracking-widest">
-                                <span className="size-1.5 bg-[#f38d38] rounded-full animate-pulse" />
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest">
+                                <span className="size-1.5 bg-primary rounded-full animate-pulse" />
                                 Our Story
                             </div>
-                            <h2 className="text-3xl lg:text-4xl font-black text-[#1a1a1a] font-cairo leading-tight">
+                            <h2 className="text-3xl lg:text-4xl font-black text-foreground font-cairo leading-tight">
                                 {t('subtitle')}
                             </h2>
-                            <p className="text-gray-500 text-base leading-relaxed font-bold border-l-4 border-[#f38d38] ps-5 rtl:border-l-0 rtl:border-r-4 rtl:pe-5 rtl:ps-0 font-cairo">
+                            <p className="text-muted-foreground text-base leading-relaxed font-bold border-l-4 border-primary ps-5 rtl:border-l-0 rtl:border-r-4 rtl:pe-5 rtl:ps-0 font-cairo">
                                 {t('desc1')}
                             </p>
                             <p className="text-gray-400 text-sm leading-7 font-medium">
@@ -88,15 +88,15 @@ export default function AboutUsPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-4 pt-4">
-                            <div className="flex-1 min-w-[140px] p-5 bg-gray-50 rounded-2xl space-y-2 border border-gray-100 group">
-                                <Target className="text-[#f38d38] size-6 group-hover:scale-110 transition-transform" />
-                                <h4 className="font-black text-gray-900 text-sm font-cairo">{t('mission')}</h4>
-                                <p className="text-gray-400 text-[11px] leading-relaxed">{t('missionDesc')}</p>
+                            <div className="flex-1 min-w-[140px] p-5 bg-muted/30 rounded-2xl space-y-2 border border-border group">
+                                <Target className="text-primary size-6 group-hover:scale-110 transition-transform" />
+                                <h4 className="font-black text-foreground text-sm font-cairo">{t('mission')}</h4>
+                                <p className="text-muted-foreground text-[11px] leading-relaxed">{t('missionDesc')}</p>
                             </div>
-                            <div className="flex-1 min-w-[140px] p-5 bg-gray-50 rounded-2xl space-y-2 border border-gray-100 group">
-                                <Eye className="text-[#f38d38] size-6 group-hover:scale-110 transition-transform" />
-                                <h4 className="font-black text-gray-900 text-sm font-cairo">{t('vision')}</h4>
-                                <p className="text-gray-400 text-[11px] leading-relaxed">{t('visionDesc')}</p>
+                            <div className="flex-1 min-w-[140px] p-5 bg-muted/30 rounded-2xl space-y-2 border border-border group">
+                                <Eye className="text-primary size-6 group-hover:scale-110 transition-transform" />
+                                <h4 className="font-black text-foreground text-sm font-cairo">{t('vision')}</h4>
+                                <p className="text-muted-foreground text-[11px] leading-relaxed">{t('visionDesc')}</p>
                             </div>
                         </div>
                     </div>
@@ -105,8 +105,8 @@ export default function AboutUsPage() {
                 {/* Stats Section */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-24 lg:mb-32">
                     {stats.map((stat, i) => (
-                        <div key={i} className="p-8 bg-white border border-gray-100 rounded-[1.5rem] text-center shadow-sm hover:shadow-xl hover:shadow-gray-50 transition-all group">
-                            <div className="size-12 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#f38d38] group-hover:bg-[#f38d38] group-hover:text-white transition-all">
+                        <div key={i} className="p-8 bg-background border border-border rounded-[1.5rem] text-center shadow-sm hover:shadow-xl hover:shadow-muted/50 transition-all group">
+                            <div className="size-12 bg-muted/50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                                 {stat.icon}
                             </div>
                             <div className="text-2xl font-black text-gray-900 font-inter mb-1">
@@ -120,17 +120,17 @@ export default function AboutUsPage() {
                 </div>
 
                 {/* Why Choose Us Section */}
-                <div className="relative bg-[#1a1a1a] rounded-[3rem] p-10 lg:p-20 overflow-hidden">
+                <div className="relative bg-foreground rounded-[3rem] p-10 lg:p-20 overflow-hidden">
                     {/* Background elements */}
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-[#f38d38]/10 blur-[100px] rounded-full" />
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full" />
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 blur-[100px] rounded-full" />
+                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 blur-[80px] rounded-full" />
 
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <div className="lg:col-span-4 space-y-6">
-                            <div className="text-[#f38d38] text-[10px] font-black tracking-[0.2em] uppercase">
+                            <div className="text-primary text-[10px] font-black tracking-[0.2em] uppercase">
                                 Benefits
                             </div>
-                            <h2 className="text-3xl text-white font-black font-cairo leading-tight">
+                            <h2 className="text-3xl text-primary-foreground font-black font-cairo leading-tight">
                                 {t('whyChooseUs.title')}
                             </h2>
                             <p className="text-gray-400 text-sm leading-relaxed font-medium">

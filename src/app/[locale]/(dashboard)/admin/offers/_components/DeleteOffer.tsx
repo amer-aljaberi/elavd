@@ -58,7 +58,7 @@ export default function DeleteOffer({ isOpen, onClose, onSuccess, offer }: Delet
             }
         >
             <div className="flex flex-col items-center gap-6 py-8">
-                <div className="h-16 w-16 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-600">
+                <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
                     <AlertTriangle className="h-8 w-8 stroke-[1.75]" />
                 </div>
 

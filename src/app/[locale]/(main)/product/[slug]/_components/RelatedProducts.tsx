@@ -26,10 +26,10 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
   return (
     <section className="mt-14 w-full px-0">
       <div className="flex items-center justify-between mb-8 px-2 md:px-0">
-        <h3 className="text-xl sm:text-2xl font-black text-[#1a1a1a] font-cairo">
+        <h3 className="text-xl sm:text-2xl font-black text-foreground font-cairo">
           {t("RelatedProducts")}
         </h3>
-        <div className="h-[2px] flex-1 bg-gray-100 mx-6 hidden sm:block" />
+        <div className="h-[2px] flex-1 bg-border mx-6 hidden sm:block" />
       </div>
 
       <div className="relative overflow-hidden" ref={emblaRef}>

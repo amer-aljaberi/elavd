@@ -62,7 +62,7 @@ export default async function StorePage({ params, searchParams }: StorePageProps
 
   // Data fetching
   const [allCategories, featuredProducts] = await Promise.all([
-    getCategories(10),
+    getCategories(100),
     getProducts({ is_featured: true, limit: 4 })
   ])
 
@@ -99,7 +99,7 @@ export default async function StorePage({ params, searchParams }: StorePageProps
     : t('Store')
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-20">
+    <div className="min-h-screen bg-muted/30 pb-20">
       <Script id="jsonld-store" type="application/ld+json" strategy="afterInteractive">
         {JSON.stringify(getStoreJsonLd(locale, { query }))}
       </Script>

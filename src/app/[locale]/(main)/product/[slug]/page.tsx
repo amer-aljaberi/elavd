@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const categoryHref = product.category ? `/store/${categorySlug}` : "/store";
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-20" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-muted/30 pb-20" dir={isRtl ? "rtl" : "ltr"}>
       <Script id="jsonld-product" type="application/ld+json" strategy="afterInteractive">
         {JSON.stringify(getProductJsonLd(locale, {
           id: product.id,
@@ -84,14 +84,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
       <div className="container mx-auto xl:px-16 lg:px-10 px-4 mt-12 lg:mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-start">
-
-          <div className="lg:col-span-9 space-y-8 order-1">
+          <div className="lg:col-span-9 space-y-8 order-1 lg:order-2">
             <ProductHero product={product} phone={phone} />
             <ProductTabs product={product} />
 
           </div>
 
-          <div className="lg:col-span-3 order-2">
+          <div className="lg:col-span-3 order-2 lg:order-1">
             <CategorySidebar categories={categories} featuredProducts={featuredProducts} activeSlug={""} />
           </div>
         </div>

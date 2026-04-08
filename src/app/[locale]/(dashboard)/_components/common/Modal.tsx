@@ -120,7 +120,7 @@ export function DashboardImageUpload({ onUpload, value, bucket = "products" }: {
           <>
             <img src={preview} alt="Preview" className="h-full w-full object-cover rounded-xl" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-              <Button size="icon" variant="ghost" className="text-white hover:text-red-500" onClick={() => { setPreview(""); onUpload(""); }}>
+              <Button size="icon" variant="ghost" className="text-white hover:text-destructive" onClick={() => { setPreview(""); onUpload(""); }}>
                 <X className="h-5 w-5" />
               </Button>
             </div>

@@ -106,7 +106,7 @@ export default function ourCategories() {
                                                 <Link href={`/product-category/${cat.slug_en}`} className=' py-2.5 px-3'>
                                                  <button
                                                     type="button"
-                                                    className="w-full py-2.5 px-3 cursor-pointer rounded-md bg-[#fbb034] text-white font-bold text-sm hover:bg-[#e9a12c] transition-colors shadow-sm"
+                                                    className="w-full py-2.5 px-3 cursor-pointer rounded-md bg-primary/90 text-white font-bold text-sm hover:bg-primary/70 transition-colors shadow-sm"
                                                 >
                                                     {t('ViewMore')}
                                                 </button>
@@ -120,7 +120,7 @@ export default function ourCategories() {
                     </div>
                     <aside className="lg:col-span-1 order-1">
                         <div className="border border-gray-200 overflow-hidden">
-                            <div className="bg-[#fbb034] text-white px-6 py-3.5  font-extrabold text-lg text-center">
+                            <div className="bg-primary/90 text-white px-6 py-3.5  font-extrabold text-lg text-center">
                                 {t('FeaturedProducts')}
                             </div>
                             <div className="divide-y divide-gray-100 min-h-[385px]">

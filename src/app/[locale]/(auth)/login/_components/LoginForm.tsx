@@ -82,7 +82,7 @@ export default function LoginForm() {
       className="w-full max-w-md"
     >
       <Card className="border-none shadow-2xl bg-background/80 backdrop-blur-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-primary via-orange-400 to-primary" />
+        <div className="h-2 bg-gradient-to-r from-primary via-secondary to-primary" />
         <CardHeader className="space-y-2 pb-8 pt-10">
           <CardTitle className="text-3xl font-bold text-center tracking-tight text-foreground">
             {t("LoginTitle")}

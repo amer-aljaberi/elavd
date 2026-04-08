@@ -25,6 +25,13 @@ export type Product = {
         name_en: string | null;
         name_ar: string | null;
         slug: string | null;
+    },
+    sub_category_id?: string;
+    sub_category?: {
+        id: string;
+        name_en: string | null;
+        name_ar: string | null;
+        slug: string | null;
     }
 };
 
@@ -38,7 +45,7 @@ export async function getProductBySlug(slug: string) {
 
     const { data, error } = await supabaseBrowser
         .from('products')
-        .select('*, category:categories(*)')
+        .select('*, category:categories(*), sub_category:sub_categories(*)')
         .or(filter)
         .limit(1);
 
@@ -50,18 +57,21 @@ export async function getProducts({
     is_featured, 
     is_popular, 
     categoryId,
+    subCategoryId,
     limit = 20 
 }: { 
     is_featured?: boolean, 
     is_popular?: boolean, 
     categoryId?: string,
+    subCategoryId?: string,
     limit?: number 
 }) {
-    let query = supabaseBrowser.from('products').select('*');
+    let query = supabaseBrowser.from('products').select('*, categories(*), sub_categories(*)');
     
     if (is_featured) query = query.eq('is_featured', true);
     if (is_popular) query = query.eq('is_popular', true);
     if (categoryId) query = query.eq('category_id', categoryId);
+    if (subCategoryId) query = query.eq('sub_category_id', subCategoryId);
     
     const { data } = await query
         .order('created_at', { ascending: false })
@@ -83,16 +93,21 @@ export async function getRelatedProducts(product: Product, limit: number = 4) {
 export async function searchProducts({
     query,
     categoryId,
+    subCategoryId,
     limit = 10
 }: {
     query: string;
     categoryId?: string;
+    subCategoryId?: string;
     limit?: number;
 }) {
-    let supabaseQuery = supabaseBrowser.from('products').select('*');
+    let supabaseQuery = supabaseBrowser.from('products').select('*, categories(*), sub_categories(*)');
 
     if (categoryId) {
         supabaseQuery = supabaseQuery.eq('category_id', categoryId);
+    }
+    if (subCategoryId) {
+        supabaseQuery = supabaseQuery.eq('sub_category_id', subCategoryId);
     }
 
     if (query) {

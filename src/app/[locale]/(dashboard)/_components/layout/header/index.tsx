@@ -86,7 +86,7 @@ export default function Header() {
                         <DropdownMenuItem
                             onClick={handleLogout}
                             disabled={isLoading}
-                            className="focus:bg-red-500 bg-red-500/10 text-red-500 cursor-pointer rounded-md disabled:opacity-50"
+                            className="focus:bg-destructive bg-destructive/10 text-destructive cursor-pointer rounded-md disabled:opacity-50"
                         >
                             {isLoading ? (
                                 <Loader2 className="me-2 h-4 w-4 animate-spin" />

@@ -23,10 +23,10 @@ const Tooltip = ({ text, isVisible }: { text: string; isVisible: boolean }) => (
                 initial={{ opacity: 0, scale: 0.8, x: 10 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.8, x: 10 }}
-                className="absolute top-1/2 -translate-y-1/2 ltr:right-full ltr:me-3 rtl:left-full rtl:ms-3 px-2 py-1 bg-[#1a1a1a] text-white text-[10px] rounded whitespace-nowrap z-30 pointer-events-none"
+                className="absolute top-1/2 -translate-y-1/2 ltr:right-full ltr:me-3 rtl:left-full rtl:ms-3 px-2 py-1 bg-foreground text-primary-foreground text-[10px] rounded whitespace-nowrap z-30 pointer-events-none"
             >
                 {text}
-                <div className="absolute top-1/2 -translate-y-1/2 ltr:-right-1 rtl:-left-1 border-t-4 border-t-transparent border-b-4 border-b-transparent ltr:border-l-4 ltr:border-l-[#1a1a1a] rtl:border-r-4 rtl:border-r-[#1a1a1a]" />
+                <div className="absolute top-1/2 -translate-y-1/2 ltr:-right-1 rtl:-left-1 border-t-4 border-t-transparent border-b-4 border-b-transparent ltr:border-l-4 ltr:border-l-foreground rtl:border-r-4 rtl:border-r-foreground" />
             </motion.div>
         )}
     </AnimatePresence>
@@ -37,7 +37,7 @@ const IconButton = ({
     tooltip,
     onClick,
     isActive = false,
-    activeColor = "hover:bg-[#f38d38]"
+    activeColor = "hover:bg-primary"
 }: {
     icon: any;
     tooltip: string;
@@ -54,7 +54,7 @@ const IconButton = ({
                     e.preventDefault();
                     onClick?.();
                 }}
-                className={`p-2.5 cursor-pointer rounded-full bg-white shadow-md ${activeColor} ${isActive ? 'text-[#f38d38]' : 'text-gray-400'} hover:text-white transition-colors`}
+                className={`p-2.5 cursor-pointer rounded-full bg-background shadow-md transition-all ${isActive ? 'bg-secondary text-primary-foreground' : 'text-muted-foreground hover:bg-primary hover:text-primary-foreground'}`}
             >
                 <Icon size={16} fill={isActive ? "currentColor" : "none"} />
             </button>
@@ -98,9 +98,9 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    className="group relative flex flex-col md:flex-row bg-[#f9f9f9]/50 border border-gray-100 rounded-md overflow-hidden hover:shadow-md transition-all duration-500"
+                    className="group relative flex flex-col md:flex-row bg-muted/30 border border-border rounded-md overflow-hidden hover:shadow-md transition-all duration-500"
                 >
-                    <div className="relative w-full md:w-80 h-64 md:h-auto bg-white flex items-center justify-center px-4 py-1 shrink-0">
+                    <div className="relative w-full md:w-80 h-64 md:h-auto bg-background flex items-center justify-center px-4 py-1 shrink-0">
                         {main_image ? (
                             <div className="relative size-48 md:size-56">
                                 <Image
@@ -111,10 +111,10 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                                 />
                             </div>
                         ) : (
-                            <Layers size={48} className="text-gray-200" />
+                            <Layers size={48} className="text-muted-foreground/30" />
                         )}
                         {is_hot && (
-                            <div className="absolute top-6 ltr:left-6 rtl:right-6 px-3 py-1 bg-[#d32f2f] text-white text-[10px] font-black rounded-full shadow-lg">
+                            <div className="absolute top-6 ltr:left-6 rtl:right-6 px-3 py-1 bg-destructive text-destructive-foreground text-[10px] font-black rounded-full shadow-lg">
                                 {t('Hot')}
                             </div>
                         )}
@@ -122,22 +122,22 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
                     <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
                         <div className="space-y-4">
-                            <h4 className="text-gray-400 font-bold text-xs uppercase tracking-widest font-cairo">
+                            <h4 className="text-muted-foreground font-bold text-xs uppercase tracking-widest font-cairo">
                                 {t('CategoryMetalSafes')}
                             </h4>
-                            <Link href={`/product/${slug_en}`} className="text-xl md:text-2xl font-black text-[#1a1a1a] font-cairo leading-tight">
+                            <Link href={`/product/${slug_en}`} className="text-xl md:text-2xl font-black text-foreground font-cairo leading-tight">
                                 {name || '—'}
                             </Link>
 
                         </div>
 
                         <div className="flex flex-wrap items-center gap-6 mt-10">
-                            <button
+                            {/* <button
                                 onClick={handleAddToCart}
-                                className="px-10 py-3 bg-[#f38d38] text-white font-black text-xs uppercase tracking-widest rounded-full hover:bg-[#e67e22] transition-all shadow-lg shadow-orange-100 transform active:scale-95"
+                                className="px-10 py-3 bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 transform active:scale-95"
                             >
                                 {t('addToCart')}
-                            </button>
+                            </button> */}
 
                             <div className="flex items-center gap-3">
                                 <IconButton
@@ -176,10 +176,11 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="group relative flex flex-col bg-white border border-gray-300 p-6 transition-all hover:shadow-md shadow-sm rounded-md h-full"
+                className="group relative flex flex-col bg-background border border-border p-6 transition-all hover:shadow-md hover:border-secondary/30 shadow-sm rounded-md h-full overflow-hidden"
             >
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-secondary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
                 {is_hot && (
-                    <div className="absolute top-4 ltr:right-4 rtl:left-4 z-10 px-3 py-1 bg-[#d32f2f] text-white text-[10px] font-extrabold rounded-full tracking-wider uppercase">
+                    <div className="absolute top-4 ltr:right-4 rtl:left-4 z-10 px-3 py-1 bg-destructive text-destructive-foreground text-[10px] font-extrabold rounded-full tracking-wider uppercase">
                         {t('Hot')}
                     </div>
                 )}
@@ -204,7 +205,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                     />
                 </div>
 
-                <div className="relative h-60 w-full mb-6 flex items-center justify-center bg-white overflow-hidden shrink-0">
+                <div className="relative h-60 w-full mb-6 flex items-center justify-center bg-background overflow-hidden shrink-0">
                     {main_image ? (
                         <div className="relative size-44">
                             <Link href={`/product/${slug_en}`} >
@@ -217,7 +218,7 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
                             </Link>
                         </div>
                     ) : (
-                        <div className="size-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-200">
+                        <div className="size-16 bg-muted/30 rounded-full flex items-center justify-center text-muted-foreground/30">
                             <Layers size={32} />
                         </div>
                     )}
@@ -225,26 +226,32 @@ export const ProductCard: React.FC<ProductCardProps> = (props) => {
 
                 <div className="flex flex-col items-center text-center flex-1">
                     <Link href={`/product/${slug_en}`} >
-                        <h3 className="text-[#1a1a1a] font-bold text-base line-clamp-1 mb-1 font-cairo">
+                        <h3 className="text-foreground font-bold text-base line-clamp-1 mb-1 font-cairo">
                             {name || '—'}
                         </h3>
                     </Link>
-                    <p className="text-gray-400 text-xs font-medium mb-8 line-clamp-1 h-4">
+                    <p className="text-muted-foreground text-xs font-medium mb-8 line-clamp-1 h-4">
                         {description || '—'}
                     </p>
 
-                    <button
+                    {/* <button
                         onClick={handleAddToCart}
-                        className="group/btn cursor-pointer relative w-full h-11 bg-[#f38d38] text-white font-bold text-sm rounded-full transition-all hover:bg-[#e67e22] shadow-sm mt-auto transform active:scale-95 overflow-hidden"
+                        className="group/btn cursor-pointer relative w-full h-11 bg-primary text-primary-foreground font-bold text-sm rounded-full transition-all hover:bg-primary/90 shadow-sm mt-auto transform active:scale-95 overflow-hidden"
                     >
                         <div className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/btn:-translate-y-full">
                             {t('ReadMore')}
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-center gap-2 transition-transform duration-300 translate-y-full group-hover/btn:translate-y-0 text-white">
+                        <div className="absolute inset-0 flex items-center justify-center gap-2 transition-transform duration-300 translate-y-full group-hover/btn:translate-y-0 text-primary-foreground">
                             <ShoppingCart size={18} />
                             <span>{t('addToCart')}</span>
                         </div>
-                    </button>
+                    </button> */}
+                    <Link 
+                        href={`/product/${slug_en}`}
+                        className="w-full h-11 bg-primary text-primary-foreground font-bold text-sm rounded-full transition-all hover:bg-primary/90 shadow-sm mt-auto transform active:scale-95 flex items-center justify-center"
+                    >
+                        {t('ReadMore')}
+                    </Link>
                 </div>
             </motion.div>
 

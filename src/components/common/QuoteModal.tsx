@@ -126,12 +126,12 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0 overflow-hidden rounded-md border-none shadow-md max-h-[90vh] flex flex-col">
-        <div className="bg-[#1a1a1a] px-8 py-4 lg:px-10 lg:py-6 text-white relative overflow-hidden shrink-0">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#f38d38]/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+        <div className="bg-foreground px-8 py-4 lg:px-10 lg:py-6 text-primary-foreground relative overflow-hidden shrink-0">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
           
           <button 
             onClick={onClose}
-            className="absolute cursor-pointer top-6 right-6 z-20 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
+            className="absolute cursor-pointer top-6 right-6 z-20 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-primary-foreground/50 hover:text-primary-foreground"
           >
             <X size={20} />
           </button>
@@ -139,15 +139,15 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
           <DialogTitle className="text-2xl font-black font-cairo text-center relative z-10">
             {t('QuoteRequest')}
           </DialogTitle>
-          <p className="text-[10px] text-gray-500 text-center uppercase tracking-[0.2em] mt-2 font-black relative z-10">
+          <p className="text-[10px] text-primary-foreground/60 text-center uppercase tracking-[0.2em] mt-2 font-black relative z-10">
             {isAr ? 'احصل على عرض سعر مخصص الآن' : 'Get your custom quote now'}
           </p>
         </div>
         
         <div className="overflow-y-auto flex-1 custom-scrollbar">
-          <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-6 bg-white" dir={isAr ? 'rtl' : 'ltr'}>
+          <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-6 bg-background" dir={isAr ? 'rtl' : 'ltr'}>
             <div className="space-y-2">
-              <label className="text-[13px] font-black uppercase  text-gray-400 block px-1">
+              <label className="text-[13px] font-black uppercase text-muted-foreground block px-1">
                 {t('CustomerName')}
               </label>
               <Input 
@@ -155,12 +155,12 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 placeholder={isAr ? 'اسمك بالكامل' : 'Your full name'}
-                className="h-12 rounded-lg bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-0  transition-all px-6 text-sm font-bold"
+                className="h-12 rounded-lg bg-muted/30 border-border focus:bg-background focus:ring-0 transition-all px-6 text-sm font-bold"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block px-1">
                 {t('CustomerEmail')} *
               </label>
               <Input 
@@ -169,23 +169,23 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="example@mail.com"
-                className="h-12 rounded-lg bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-0  transition-all px-6 text-sm font-bold"
+                className="h-12 rounded-lg bg-muted/30 border-border focus:bg-background focus:ring-0 transition-all px-6 text-sm font-bold"
                />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block px-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block px-1">
                   {t('ProductName')}
                 </label>
                 <Input 
                   disabled
                   value={product ? (isAr ? product.name_ar : product.name_en) || '' : (isAr ? 'سلة التسوق' : 'Cart items')}
-                   className="h-12 rounded-lg bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-0  transition-all px-6 text-sm font-bold"
+                   className="h-12 rounded-lg bg-muted/30 border-border focus:bg-background focus:ring-0 transition-all px-6 text-sm font-bold"
               />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block px-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block px-1">
                   {t('Quantity')}
                 </label>
                 <Input 
@@ -194,13 +194,13 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                   required
                   value={formData.quantity}
                   onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
-                   className="h-12 rounded-lg bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-0  transition-all px-6 text-sm font-bold"
+                   className="h-12 rounded-lg bg-muted/30 border-border focus:bg-background focus:ring-0 transition-all px-6 text-sm font-bold"
               />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block px-1">
                 {t('WhatsAppNumber')}
               </label>
               <div className="flex gap-2">
@@ -208,7 +208,7 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                   value={formData.countryCode}
                   onValueChange={(val) => setFormData({ ...formData, countryCode: val })}
                 >
-                  <SelectTrigger className="h-12 w-[110px] cursor-pointer py-6 hover:bg-gray-50/50 rounded-lg bg-gray-50/50 border-gray-100 focus:ring-0 px-3 text-sm font-bold flex shrink-0">
+                  <SelectTrigger className="h-12 w-[110px] cursor-pointer py-6 hover:bg-muted/30 rounded-lg bg-muted/30 border-border focus:ring-0 px-3 text-sm font-bold flex shrink-0">
                     <SelectValue>
                       <div className="flex items-center gap-2">
                         <span className="text-sm">{countries.find(c => c.code === formData.countryCode)?.flag}</span>
@@ -216,17 +216,17 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                       </div>
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer rounded-xl border-gray-100 shadow-xl overflow-hidden min-w-[140px]">
+                  <SelectContent className="bg-background cursor-pointer rounded-xl border-border shadow-xl overflow-hidden min-w-[140px]">
                     {countries.map((country) => (
                       <SelectItem 
                         key={country.code} 
                         value={country.code}
-                        className="py-3 px-4 focus:bg-orange-50 transition-colors cursor-pointer"
+                        className="py-3 px-4 focus:bg-primary/5 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg">{country.flag}</span>
-                          <span className="font-bold text-sm text-gray-600">{country.code}</span>
-                          <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{country.name}</span>
+                          <span className="font-bold text-sm text-muted-foreground">{country.code}</span>
+                          <span className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-wider">{country.name}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -238,20 +238,20 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                    required
                    value={formData.phone}
                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  className="h-12 rounded-lg bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-0  transition-all px-6 text-sm font-bold flex-1"
+                  className="h-12 rounded-lg bg-muted/30 border-border focus:bg-background focus:ring-0 transition-all px-6 text-sm font-bold flex-1"
                />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block px-1">
                 {t('YourMessage')} *
               </label>
               <Textarea 
                 required
                 value={formData.message}
                 onChange={e => setFormData({ ...formData, message: e.target.value })}
-                className="min-h-[120px] rounded-2xl bg-gray-50/50 border-gray-100 focus:bg-white focus:ring-4 focus:ring-orange-500/5 transition-all p-6 text-sm font-bold resize-none"
+                className="min-h-[120px] rounded-2xl bg-muted/30 border-border focus:bg-background focus:ring-4 focus:ring-primary/5 transition-all p-6 text-sm font-bold resize-none"
                 placeholder={isAr ? 'أخبرنا بمزيد من التفاصيل...' : 'Tell us more details...'}
               />
             </div>
@@ -261,13 +261,13 @@ export default function QuoteModal({ isOpen, onClose, product, items }: QuoteMod
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1 h-16 rounded-2xl border-gray-100 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-red-500 transition-all active:scale-95"
+                className="flex-1 h-16 rounded-2xl border-border font-black uppercase tracking-[0.2em] text-[10px] hover:bg-destructive hover:text-destructive-foreground transition-all active:scale-95"
               >
                 {t('Close')}
               </Button>
               <Button 
                 disabled={loading}
-                className="flex-[2] h-16 bg-[#f38d38] hover:bg-[#e67e22] text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl transition-all shadow-[0_20px_40px_-15px_rgba(243,141,56,0.3)] active:scale-95 disabled:grayscale"
+                className="flex-[2] h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl transition-all shadow-primary/20 active:scale-95 disabled:grayscale"
               >
                 {loading ? (isAr ? 'جاري الإرسال...' : 'Sending...') : t('SendRequest')}
               </Button>

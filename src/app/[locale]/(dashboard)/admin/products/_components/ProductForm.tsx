@@ -33,6 +33,7 @@ interface ProductFormProps {
 export default function ProductForm({ initialData, onSuccess, onCancel, formId }: ProductFormProps) {
     const t = useTranslations("dashboard");
     const [categories, setCategories] = useState<any[]>([]);
+    const [subCategories, setSubCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, setValue, watch, reset, control } = useForm({
@@ -43,21 +44,31 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
             is_event: false,
             price: 0,
             discount_price: 0,
+            category_id: initialData?.category_id || "",
+            sub_category_id: initialData?.sub_category_id || "",
             main_image: "",
         }
     });
 
     const mainImageUrl = watch("main_image");
+    const selectedCategoryId = watch("category_id");
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            const { data } = await supabaseBrowser
-                .from('categories')
-                .select('id, name_en, name_ar');
-            if (data) setCategories(data);
+        const fetchData = async () => {
+            const [
+                { data: catData },
+                { data: subData }
+            ] = await Promise.all([
+                supabaseBrowser.from('categories').select('id, name_en, name_ar'),
+                supabaseBrowser.from('sub_categories').select('id, name_en, name_ar, category_id')
+            ]);
+            if (catData) setCategories(catData);
+            if (subData) setSubCategories(subData);
         };
-        fetchCategories();
+        fetchData();
     }, []);
+
+    const filteredSubCategories = subCategories.filter(sc => sc.category_id === selectedCategoryId);
 
     const onSubmit = async (data: any) => {
         setLoading(true);
@@ -74,6 +85,8 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                 ...data,
                 price: data.price ? parseFloat(data.price) : null,
                 discount_price: data.discount_price ? parseFloat(data.discount_price) : null,
+                category_id: data.category_id || null,
+                sub_category_id: data.sub_category_id || null,
                 seo_keywords_en: toKeywordsArray(data.seo_keywords_en),
                 seo_keywords_ar: toKeywordsArray(data.seo_keywords_ar),
             };
@@ -81,6 +94,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
             // Remove relational/non-table fields that might come from defaultValues (joins)
             const {
                 categories: _categories,
+                sub_categories: _sub_categories,
                 id: _id,
                 created_at: _createdAt,
                 updated_at: _updatedAt,
@@ -148,18 +162,61 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                             <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
                                 {t("Category")}
                             </Label>
-                            <Select onValueChange={(val) => setValue("category_id", val)} defaultValue={initialData?.category_id}>
-                                <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
-                                    <SelectValue placeholder={t("Category")} />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/70 backdrop-blur">
-                                    {categories.map((cat) => (
-                                        <SelectItem key={cat.id} value={cat.id} className="py-3 px-5 border-b border-border/60 last:border-none focus:bg-foreground transition-colors cursor-pointer font-medium text-sm">
-                                            {cat.name_en}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Controller
+                                name="category_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select 
+                                        onValueChange={(val) => { 
+                                            field.onChange(val); 
+                                            setValue("sub_category_id", ""); 
+                                        }} 
+                                        value={field.value}
+                                    >
+                                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm text-start">
+                                            <SelectValue placeholder={t("Category")} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/95 backdrop-blur-md z-[9999]">
+                                            {categories.map((cat) => (
+                                                <SelectItem key={cat.id} value={cat.id} className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">
+                                                    {cat.name_en}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                        </div>
+
+                        <div className="space-y-2 group">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("SubCategory")}
+                            </Label>
+                            <Controller
+                                name="sub_category_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select 
+                                        onValueChange={field.onChange} 
+                                        value={field.value}
+                                        disabled={!selectedCategoryId}
+                                    >
+                                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm text-start">
+                                            <SelectValue placeholder={t("SubCategory")} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-border/60 shadow-xl overflow-hidden bg-background/95 backdrop-blur-md z-[9999]">
+                                            {filteredSubCategories.map((sub) => (
+                                                <SelectItem key={sub.id} value={sub.id} className="py-2.5 px-4 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer font-medium text-sm">
+                                                    {sub.name_en}
+                                                </SelectItem>
+                                            ))}
+                                            {filteredSubCategories.length === 0 && (
+                                                <div className="p-4 text-xs text-muted-foreground text-center">{t("None")}</div>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
 
                         <div className="space-y-2 group">
@@ -181,7 +238,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                                     <Switch
                                         checked={watch(flag.name)}
                                         onCheckedChange={(val) => setValue(flag.name, val)}
-                                        className="data-[state=checked]:bg-primary scale-90"
+                                        className="data-[state=checked]:bg-secondary scale-90"
                                     />
                                     <Label className="text-[11px] font-medium text-muted-foreground">
                                         {flag.label}
@@ -195,7 +252,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                 {/* Section: Descriptions */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 ring-1 ring-orange-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
                             <FileText className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
@@ -234,7 +291,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                 {/* Section: Image */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 ring-1 ring-purple-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-accent/10 flex items-center justify-center text-accent ring-1 ring-accent/20 transition-transform">
                             <ImageIcon className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
@@ -259,7 +316,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel, formId }
                 {/* Section: SEO */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 ring-1 ring-green-500/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary ring-1 ring-secondary/20 transition-transform">
                             <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>

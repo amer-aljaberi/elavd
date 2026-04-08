@@ -97,7 +97,7 @@ export default function UserList() {
 
     if (loading) return (
         <div className="flex items-center justify-center py-20">
-            <RefreshCcw className="h-8 w-8 animate-spin text-primary" />
+            <RefreshCcw className="h-8 w-8 animate-spin text-secondary" />
         </div>
     );
 
@@ -107,8 +107,8 @@ export default function UserList() {
                 <p className="text-sm font-bold text-muted-foreground">
                     {tDashboard("TotalCount")}: <span className="text-foreground">{users.length}</span>
                 </p>
-                <Button variant="ghost" size="sm" onClick={fetchUsers} className="text-xs font-bold hover:text-primary">
-                    <RefreshCcw className="h-3 w-3 me-2" />
+                <Button variant="ghost" size="sm" onClick={fetchUsers} className="text-xs font-bold hover:text-secondary group transition-all">
+                    <RefreshCcw className="h-3 w-3 me-2 group-hover:rotate-180 transition-transform duration-500" />
                     {tDashboard("Refresh")}
                 </Button>
             </div>
@@ -129,7 +129,7 @@ export default function UserList() {
                         </DashboardTableCell>
                         <DashboardTableCell>
                             <div className={`px-2 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 ${user.role === 'admin'
-                                ? 'bg-primary/10 text-primary'
+                                ? 'bg-secondary/10 text-secondary'
                                 : 'bg-muted text-muted-foreground'
                                 }`}>
                                 {user.role === 'admin' ? <Shield className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
@@ -169,7 +169,7 @@ export default function UserList() {
                         <Input
                             {...register("name")}
                             placeholder={tDashboard("UserNamePlaceholder")}
-                            className="bg-muted/30 border-none rounded-xl"
+                            className="bg-background border-border/60 rounded-xl"
                         />
                     </div>
 
@@ -182,7 +182,7 @@ export default function UserList() {
                             {...register("email")}
                             type="email"
                             placeholder={tDashboard("EmailPlaceholder")}
-                            className="bg-muted/30 border-none rounded-xl"
+                            className="bg-background border-border/60 rounded-xl"
                         />
                     </div>
 
@@ -195,7 +195,7 @@ export default function UserList() {
                             {...register("password")}
                             type="password"
                             placeholder={tDashboard("PasswordPlaceholder")}
-                            className="bg-muted/30 border-none rounded-xl"
+                            className="bg-background border-border/60 rounded-xl"
                         />
                         <p className="text-[10px] text-muted-foreground italic">{tDashboard("PasswordHint")}</p>
                     </div>

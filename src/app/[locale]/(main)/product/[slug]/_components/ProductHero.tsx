@@ -40,10 +40,10 @@ export default function ProductHero({ product, phone }: ProductHeroProps) {
         : null;
 
   return (
-    <div className="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
+    <div className="bg-background border border-border rounded-md shadow-sm overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
         <div 
-          className="relative bg-[#fcfcfc] p-8 lg:p-12 flex items-center justify-center border-b lg:border-b-0 lg:border-e lg:border-gray-100 overflow-hidden group cursor-crosshair"
+          className="relative bg-muted/30 p-8 lg:p-12 flex items-center justify-center border-b lg:border-b-0 lg:border-e lg:border-border overflow-hidden group cursor-crosshair"
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsZooming(true)}
           onMouseLeave={() => setIsZooming(false)}
@@ -63,13 +63,13 @@ export default function ProductHero({ product, phone }: ProductHeroProps) {
               
               <button 
                 onClick={() => setIsPreviewOpen(true)}
-                className="absolute bottom-6 right-6 p-3 rounded-full bg-white shadow-xl border border-gray-100 text-gray-500 hover:text-[#f38d38] hover:scale-110 transition-all opacity-0 group-hover:opacity-100 cursor-pointer z-20"
+                className="absolute bottom-6 right-6 p-3 rounded-full bg-background shadow-xl border border-border text-muted-foreground hover:text-primary hover:scale-110 transition-all opacity-0 group-hover:opacity-100 cursor-pointer z-20"
               >
                 <Maximize2 size={20} />
               </button>
             </>
           ) : (
-            <div className="size-32 bg-white rounded-2xl border border-gray-100 flex items-center justify-center text-gray-200 shadow-sm">
+            <div className="size-32 bg-background rounded-2xl border border-border flex items-center justify-center text-muted-foreground/30 shadow-sm">
               <Layers size={52} />
             </div>
           )}
@@ -77,29 +77,29 @@ export default function ProductHero({ product, phone }: ProductHeroProps) {
 
         <div className="px-8 py-6 lg:px-8 lg:py-8 flex flex-col justify-center">
           <div className="space-y-4">
-            <div className="text-[#f38d38] text-[10px] font-black tracking-[0.2em] flex items-center gap-2 uppercase">
+            <div className="text-primary text-[10px] font-black tracking-[0.2em] flex items-center gap-2 uppercase">
               <Tag className="size-3.5" />
               {t("Products")}
             </div>
 
-            <h2 className="text-2xl lg:text-3xl font-black text-[#1a1a1a]">
+            <h2 className="text-2xl lg:text-3xl font-black text-foreground">
               {name || "—"}
             </h2>
 
             {product.country_of_origin && (
-              <div className="flex items-center gap-2 text-gray-500 text-[10px] font-black uppercase tracking-widest bg-gray-50 w-fit px-3 py-1.5 rounded-lg border border-gray-100">
-                <Globe className="size-3.5 text-[#f38d38]" />
+              <div className="flex items-center gap-2 text-muted-foreground text-[10px] font-black uppercase tracking-widest bg-muted/50 w-fit px-3 py-1.5 rounded-lg border border-border">
+                <Globe className="size-3.5 text-primary" />
                 <span>{t("Origin")} {product.country_of_origin}</span>
               </div>
             )}
 
             {shortDesc && (
-              <p className="text-gray-500 text-sm leading-7 font-medium">{shortDesc}</p>
+              <p className="text-muted-foreground text-sm leading-7 font-medium">{shortDesc}</p>
             )}
 
             {price !== null && (
               <div className="pt-2">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-50 text-[#f38d38] border border-orange-100 font-black">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/5 text-primary border border-primary/10 font-black">
                   <span className="text-lg">{price}</span>
                   <span className="text-xs">{t("Currency")}</span>
                 </div>
@@ -110,7 +110,7 @@ export default function ProductHero({ product, phone }: ProductHeroProps) {
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => setIsQuoteOpen(true)}
-              className="h-12 px-6 rounded-md bg-[#f38d38] text-white font-black text-xs flex items-center justify-center gap-3 shadow-md shadow-orange-100 hover:bg-[#e67e22] transition-all active:scale-95 uppercase tracking-widest cursor-pointer"
+              className="h-12 px-6 rounded-md bg-primary text-primary-foreground font-black text-xs flex items-center justify-center gap-3 shadow-md shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 uppercase tracking-widest cursor-pointer"
             >
               <Phone size={18} />
               <span>{t("RequestQuote")}</span>
@@ -122,21 +122,21 @@ export default function ProductHero({ product, phone }: ProductHeroProps) {
               product={product} 
             />
 
-            <div className="h-12 px-5 rounded-xl border border-gray-100 bg-white flex items-center justify-center gap-1 text-gray-600 font-semibold">
-              <span className="text-xs text-gray-400 font-black uppercase">
+            <div className="h-12 px-5 rounded-xl border border-border bg-background flex items-center justify-center gap-1 text-muted-foreground font-semibold">
+              <span className="text-xs text-muted-foreground/50 font-black uppercase">
                 {t("CallUs")} :
               </span>
-              <a href={`tel:${phone}`} className="hover:text-[#f38d38] text-[15px] transition-colors">
+              <a href={`tel:${phone}`} className="hover:text-primary text-[15px] transition-colors">
                 {phone}
               </a>
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+          <div className="mt-8 pt-6 border-t border-border/50 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/50">
             <span>{t("FastShipping")}</span>
-            <span className="text-gray-300">•</span>
+            <span className="text-muted-foreground/30">•</span>
             <span>{t("TwoYearWarranty")}</span>
-            <span className="text-gray-300">•</span>
+            <span className="text-muted-foreground/30">•</span>
             <span>{t("TermsConditions")}</span>
           </div>
         </div>

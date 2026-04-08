@@ -10,12 +10,16 @@ export type Category = {
     description_en: string | null;
     description_ar: string | null;
     created_at?: string;
+    sub_categories?: any[];
 };
 
 export async function getCategories(limit: number = 16) {
     const { data } = await supabaseBrowser
         .from('categories')
-        .select('*')
+        .select(`
+            *,
+            sub_categories (*)
+        `)
         .order('created_at', { ascending: false })
         .limit(limit);
 
@@ -25,7 +29,7 @@ export async function getCategories(limit: number = 16) {
 export async function getCategoryBySlug(slug: string) {
     const { data } = await supabaseBrowser
         .from('categories')
-        .select('*')
+        .select('*, sub_categories(*)')
         .or(`slug_en.eq.${slug},slug_ar.eq.${slug}`)
         .single();
 

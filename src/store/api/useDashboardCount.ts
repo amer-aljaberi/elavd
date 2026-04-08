@@ -6,6 +6,7 @@ interface Count {
   totalBlogs: number;
   totalUsers: number;
   totalCategories: number;
+  totalSubCategories: number;
 }
 export const useDashboardCount = () => {
   return useQuery({

@@ -40,7 +40,7 @@ export default function HeaderActions() {
         </Link>
       </div>
 
-      <Link href="/cart" className="flex items-center gap-3 ps-4 ltr:border-l rtl:border-r border-border group cursor-pointer">
+{/* <Link href="/cart" className="flex items-center gap-3 ps-4 ltr:border-l rtl:border-r border-border group cursor-pointer">
         <div className="bg-[#f38d38] p-3 rounded-full text-white shadow-md shadow-primary/20 group-hover:shadow-lg transition-all group-hover:-translate-y-0.5 relative">
           <ShoppingCart className="w-5 h-5" />
           {cartCount > 0 && (
@@ -53,7 +53,7 @@ export default function HeaderActions() {
           <span className="text-xs text-muted-foreground">{t('Items')}</span>
           <span className="text-sm font-bold truncate max-w-[100px]">{t('Total')} : {cartCount}</span>
         </div>
-      </Link>
+      </Link> */}
     </div>
   )
 }

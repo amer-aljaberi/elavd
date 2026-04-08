@@ -20,7 +20,7 @@ export default function FavoritePage() {
     : `You have ${wishlist.length} items in your wishlist`;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-muted/30 pb-20">
       <Script id="jsonld-favorite" type="application/ld+json" strategy="afterInteractive">
         {JSON.stringify(getFavoriteJsonLd(locale))}
       </Script>
@@ -39,18 +39,18 @@ export default function FavoritePage() {
           </div>
         ) : (
           <div className="p-16 lg:p-24 text-center max-w-4xl mx-auto">
-            <div className="size-24 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-8 transform -rotate-6 transition-transform hover:rotate-0">
-              <Heart size={44} className="text-gray-200" />
+            <div className="size-24 bg-muted/50 rounded-3xl flex items-center justify-center mx-auto mb-8 transform -rotate-6 transition-transform hover:rotate-0">
+              <Heart size={44} className="text-muted-foreground/20" />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-4 font-cairo">
+            <h2 className="text-3xl font-extrabold text-foreground mb-4 font-cairo">
               {t('WishlistEmpty')}
             </h2>
-            <p className="text-gray-500 text-lg mb-10 max-w-sm mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-lg mb-10 max-w-sm mx-auto leading-relaxed">
               {t('WishlistDesc')}
             </p>
             <Link
               href="/"
-              className="inline-flex items-center px-10 py-4 bg-[#f38d38] text-white font-bold rounded-2xl hover:bg-[#e67e22] transition-all shadow-xl shadow-orange-200 hover:-translate-y-1 active:scale-95"
+              className="inline-flex items-center px-10 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 active:scale-95"
             >
               {t('BrowseCategories')}
             </Link>

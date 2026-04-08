@@ -58,13 +58,13 @@ export default function UpdateStatus({ order, onSuccess, onCancel }: UpdateStatu
                     {t("CurrentWorkflowStage")}
                 </Label>
                 <Select onValueChange={(val) => setStatus(val)} defaultValue={status}>
-                    <SelectTrigger className="h-11 rounded-xl border-border/60 bg-white shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                    <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
                         <SelectValue placeholder={t("SelectStatus")} />
                     </SelectTrigger>
                     <SelectContent 
                         position="popper" 
                         sideOffset={4}
-                        className="rounded-xl border border-border/60 shadow-2xl overflow-hidden bg-white z-[9999] p-1 min-w-[var(--radix-select-trigger-width)]"
+                        className="rounded-xl border border-border/60 shadow-2xl overflow-hidden bg-background z-[9999] p-1 min-w-[var(--radix-select-trigger-width)]"
                     >
                         {statuses.map((s) => (
                             <SelectItem

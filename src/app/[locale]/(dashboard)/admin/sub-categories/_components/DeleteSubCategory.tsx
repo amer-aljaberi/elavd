@@ -8,32 +8,32 @@ import { useTranslations } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-interface DeleteCategoryProps {
+interface DeleteSubCategoryProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
-    category: any;
+    subCategory: any;
 }
 
-export default function DeleteCategory({ isOpen, onClose, onSuccess, category }: DeleteCategoryProps) {
+export default function DeleteSubCategory({ isOpen, onClose, onSuccess, subCategory }: DeleteSubCategoryProps) {
     const t = useTranslations("dashboard");
     const [loading, setLoading] = useState(false);
 
     const handleDelete = async () => {
-        if (!category) return;
+        if (!subCategory) return;
         setLoading(true);
         try {
             const { error } = await supabaseBrowser
-                .from('categories')
+                .from('sub_categories')
                 .delete()
-                .eq('id', category.id);
+                .eq('id', subCategory.id);
 
             if (error) throw error;
-            toast.success(t("DeleteCategorySuccess"));
+            toast.success(t("DeleteSubCategorySuccess"));
             onSuccess();
         } catch (error: any) {
-            console.error("Error deleting category:", error);
-            toast.error(t("DeleteCategoryFailed"));
+            console.error("Error deleting sub-category:", error);
+            toast.error(t("DeleteSubCategoryFailed"));
         } finally {
             setLoading(false);
         }
@@ -63,7 +63,7 @@ export default function DeleteCategory({ isOpen, onClose, onSuccess, category }:
                 </div>
 
                 <div className="text-center px-4">
-                    <p className="text-sm font-semibold text-foreground mb-1">{category?.name_en}</p>
+                    <p className="text-sm font-semibold text-foreground mb-1">{subCategory?.name_en}</p>
                 </div>
             </div>
         </DashboardModal>

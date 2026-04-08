@@ -11,22 +11,31 @@ import { useTranslations } from "next-intl";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
 import { Package, FileText, ImageIcon, Globe, Plus, RefreshCw, Layers } from "lucide-react";
 import TextEditor from "@/components/TextEditor";
 
-interface CategoryFormProps {
+interface SubCategoryFormProps {
     initialData?: any;
     onSuccess: () => void;
     onCancel: () => void;
     formId?: string;
 }
 
-export default function CategoryForm({ initialData, onSuccess, onCancel, formId }: CategoryFormProps) {
+export default function SubCategoryForm({ initialData, onSuccess, onCancel, formId }: SubCategoryFormProps) {
     const t = useTranslations("dashboard");
+    const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, setValue, watch, control } = useForm({
         defaultValues: initialData || {
+            category_id: "",
             name_en: "",
             name_ar: "",
             slug_en: "",
@@ -45,6 +54,16 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
 
     const imageUrl = watch("image_url");
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const { data } = await supabaseBrowser
+                .from('categories')
+                .select('id, name_en, name_ar');
+            if (data) setCategories(data);
+        };
+        fetchCategories();
+    }, []);
+
     const onSubmit = async (data: any) => {
         setLoading(true);
         try {
@@ -54,23 +73,23 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                 seo_keywords_ar: typeof data.seo_keywords_ar === 'string' ? data.seo_keywords_ar.split(',').map((k: string) => k.trim()).filter(Boolean) : data.seo_keywords_ar,
             };
 
-            const { id: _id, created_at: _createdAt, updated_at: _updatedAt, ...cleanData } = finalData;
+            const { id: _id, created_at: _createdAt, updated_at: _updatedAt, categories: _categories, ...cleanData } = finalData;
 
             if (initialData?.id) {
                 const { error } = await supabaseBrowser
-                    .from('categories')
+                    .from('sub_categories')
                     .update(cleanData)
                     .eq('id', initialData.id);
                 if (error) throw error;
             } else {
                 const { error } = await supabaseBrowser
-                    .from('categories')
+                    .from('sub_categories')
                     .insert([cleanData]);
                 if (error) throw error;
             }
             onSuccess();
         } catch (error: any) {
-            console.error("Error saving category:", error);
+            console.error("Error saving sub-category:", error);
         } finally {
             setLoading(false);
         }
@@ -83,7 +102,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                 {/* Section: General */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
-                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20 transition-transform">
+                        <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary ring-1 ring-secondary/20 transition-transform">
                             <Layers className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
@@ -93,6 +112,35 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                        <div className="space-y-2 group md:col-span-2">
+                            <Label className="text-[11px] font-semibold text-muted-foreground mb-1 block group-focus-within:text-foreground transition-colors">
+                                {t("Category")}
+                            </Label>
+                            <Controller
+                                name="category_id"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field }) => (
+                                    <Select 
+                                        onValueChange={field.onChange} 
+                                        value={field.value}
+                                        defaultValue={initialData?.category_id}
+                                    >
+                                        <SelectTrigger className="h-11 rounded-xl border-border/60 bg-background/60 shadow-sm transition-all focus:ring-2 focus:ring-primary/10 focus:border-border px-4 font-medium text-sm">
+                                            <SelectValue placeholder={t("Category")} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-border/60 shadow-xl bg-background/95 backdrop-blur-md z-[9999]">
+                                            {categories.map((cat) => (
+                                                <SelectItem key={cat.id} value={cat.id} className="cursor-pointer">
+                                                    {cat.name_en}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                        </div>
+
                         {[
                             { label: t("NameEn"), name: "name_en", required: true },
                             { label: t("NameAr"), name: "name_ar", required: true },
@@ -165,7 +213,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                         <DashboardImageUpload
                             value={imageUrl}
                             onUpload={(url) => setValue("image_url", url)}
-                            bucket="categories"
+                            bucket="sub_categories"
                         />
                         <div className="mt-6 text-center space-y-1">
                             <p className="text-[11px] font-semibold tracking-wide text-foreground/80">{t("ImageUrl")}</p>
@@ -178,7 +226,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel, formId 
                 <section className="space-y-6">
                     <div className="flex items-center gap-4 transition-all group">
                         <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary ring-1 ring-secondary/20 transition-transform">
-                            <Plus className="h-5 w-5 stroke-[2]" />
+                            <Globe className="h-5 w-5 stroke-[2]" />
                         </div>
                         <div>
                             <h3 className="text-base font-semibold tracking-tight text-foreground">{t("SEO")} {t("Settings")}</h3>

@@ -67,25 +67,25 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-[#1a1a1a]/70 backdrop-blur-md"
+                        className="absolute inset-0 bg-foreground/70 backdrop-blur-md"
                     />
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.98, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        className="relative w-full max-w-5xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+                        className="relative w-full max-w-5xl bg-background rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
                     >
                         <button
                             onClick={onClose}
-                            className="absolute top-5 right-5 z-50 p-2.5 bg-white/80 hover:bg-white text-gray-900 rounded-lg shadow-sm cursor-pointer backdrop-blur-sm transition-all active:scale-95 border border-gray-100"
+                            className="absolute top-5 right-5 z-50 p-2.5 bg-background/80 hover:bg-background text-foreground rounded-lg shadow-sm cursor-pointer backdrop-blur-sm transition-all active:scale-95 border border-border"
                         >
                             <X size={20} />
                         </button>
 
                         {/* Image Left Canvas */}
-                        <div className="w-full md:w-[45%] bg-[#fcfcfc] flex items-center justify-center p-8 lg:p-12 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-full h-full bg-radial-gradient from-orange-50/20 to-transparent opacity-50" />
+                        <div className="w-full md:w-[45%] bg-muted/30 flex items-center justify-center p-8 lg:p-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-full h-full bg-radial-gradient from-primary/10 to-transparent opacity-50" />
 
                             <motion.div
                                 layoutId={`image-${product.id}`}
@@ -102,8 +102,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
                             <div className="absolute bottom-6 left-6 flex gap-2">
                                 {product.is_featured && (
-                                    <div className="px-3 py-1.5 bg-white/90 backdrop-blur-sm border border-orange-100 text-[#f38d38] text-[9px] font-black rounded-lg shadow-sm tracking-widest flex items-center gap-1.5 uppercase">
-                                        <div className="size-1.5 bg-[#f38d38] rounded-full animate-pulse" />
+                                    <div className="px-3 py-1.5 bg-background/90 backdrop-blur-sm border border-primary/10 text-primary text-[9px] font-black rounded-lg shadow-sm tracking-widest flex items-center gap-1.5 uppercase">
+                                        <div className="size-1.5 bg-primary rounded-full animate-pulse" />
                                         {t('Featured')}
                                     </div>
                                 )}
@@ -111,32 +111,32 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                         </div>
 
                         {/* Content Right Hub */}
-                        <div className="w-full md:w-[55%] p-6 lg:p-10 overflow-y-auto flex flex-col bg-white">
+                        <div className="w-full md:w-[55%] p-6 lg:p-10 overflow-y-auto flex flex-col bg-background">
                             <div className="mb-8 text-center md:text-start">
                                 <motion.div
                                     initial={{ opacity: 0, x: -5 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="text-[#f38d38] text-[10px] font-black tracking-[0.2em] mb-3 flex items-center justify-center md:justify-start gap-2 uppercase"
+                                    className="text-primary text-[10px] font-black tracking-[0.2em] mb-3 flex items-center justify-center md:justify-start gap-2 uppercase"
                                 >
                                     <Layers className="size-3.5" />
                                     {t('Products')}
                                 </motion.div>
-                                <h2 className="text-2xl lg:text-3xl font-black text-[#1a1a1a] mb-2 font-cairo tracking-tight">
+                                <h2 className="text-2xl lg:text-3xl font-black text-foreground mb-2 font-cairo tracking-tight">
                                     {name}
                                 </h2>
                             </div>
 
                             <div className="space-y-6 flex-1">
                                 <div className="space-y-4">
-                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-l-3 border-[#f38d38] ps-2 rtl:border-l-0 rtl:border-r-3 rtl:pe-2">
+                                    <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest border-l-3 border-primary ps-2 rtl:border-l-0 rtl:border-r-3 rtl:pe-2">
                                         {t('DescriptionTab')}
                                     </h4>
-                                    <div className="text-gray-500 text-sm leading-7 font-medium line-clamp-6">
+                                    <div className="text-muted-foreground text-sm leading-7 font-medium line-clamp-6">
                                         {fullDesc || shortDesc}
                                     </div>
                                     <Link
                                         href={`/product/${product.slug_en}`}
-                                        className="text-[#f38d38] font-bold text-xs flex items-center gap-1 hover:underline underline-offset-4 group transition-all"
+                                        className="text-primary font-bold text-xs flex items-center gap-1 hover:underline underline-offset-4 group transition-all"
                                     >
                                         {t('ViewFullDetails')}
                                         <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -144,27 +144,27 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-8 border-t border-gray-50 flex flex-col space-y-5">
+                            <div className="mt-8 pt-8 border-t border-border/50 flex flex-col space-y-5">
                                 <div className="flex flex-col sm:flex-row gap-3">
-                                    <button
+{/* <button
                                         onClick={handleAddToCart}
-                                        className="flex-[2] h-12 bg-[#1a1a1a] text-white font-black text-sm rounded-xl cursor-pointer hover:bg-black transition-all flex items-center justify-center gap-3 shadow-lg shadow-gray-200 active:scale-95 group uppercase tracking-widest"
+                                        className="flex-[2] h-12 bg-foreground text-primary-foreground font-black text-sm rounded-xl cursor-pointer hover:bg-foreground/90 transition-all flex items-center justify-center gap-3 shadow-lg shadow-foreground/20 active:scale-95 group uppercase tracking-widest"
                                     >
                                         <ShoppingCart size={18} className="group-hover:-translate-y-0.5 transition-transform" />
                                         <span>{t('addToCart')}</span>
-                                    </button>
+                                    </button> */}
 
                                     <div className="flex gap-3 sm:flex-1 justify-center sm:justify-end">
                                         <button
                                             onClick={handleWishlist}
-                                            className={`size-12 rounded-xl cursor-pointer flex items-center justify-center transition-all shadow-sm active:scale-95 border ${isInWishlist(product.id) ? 'bg-red-50 text-red-500 border-red-100' : 'bg-white text-gray-400 border-gray-100 hover:bg-gray-50'}`}
+                                            className={`size-12 rounded-xl cursor-pointer flex items-center justify-center transition-all shadow-sm active:scale-95 border ${isInWishlist(product.id) ? 'bg-destructive/10 text-destructive border-destructive/20' : 'bg-background text-muted-foreground border-border hover:bg-muted/30'}`}
                                         >
                                             <Heart size={20} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
                                         </button>
 
                                         <button
                                             onClick={handleCompare}
-                                            className="size-12 bg-white border border-gray-100 rounded-xl cursor-pointer flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                                            className="size-12 bg-background border border-border rounded-xl cursor-pointer flex items-center justify-center text-muted-foreground hover:bg-muted/30 transition-all shadow-sm active:scale-95"
                                         >
                                             <Repeat size={20} />
                                         </button>
@@ -172,11 +172,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                                 </div>
 
                                 <div className="flex items-center justify-between px-1">
-                                    <div className="flex items-center gap-2 text-[9px] text-gray-400 font-black uppercase tracking-[0.1em]">
+                                    <div className="flex items-center gap-2 text-[9px] text-muted-foreground font-black uppercase tracking-[0.1em]">
                                         <div className="size-1.5 bg-green-500 rounded-full" />
                                         {t('FastShipping')}
                                     </div>
-                                    <div className="text-[9px] text-gray-400 font-black uppercase tracking-[0.1em] flex items-center gap-2">
+                                    <div className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.1em] flex items-center gap-2">
                                         <Info size={12} />
                                         {t('TermsConditions')}
                                     </div>

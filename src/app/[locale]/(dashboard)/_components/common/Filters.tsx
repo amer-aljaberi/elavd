@@ -178,7 +178,7 @@ export function DashboardSelectFilter({
           <SelectValue placeholder={placeholder || "Filter"} />
         </div>
       </SelectTrigger>
-      <SelectContent className="rounded-2xl border-border/40 bg-background/80 backdrop-blur-2xl shadow-2xl p-1">
+      <SelectContent className="rounded-2xl border-border/40 bg-background/80 backdrop-blur-2xl shadow-2xl p-1 z-[9999]">
         {options.map((opt) => (
           <SelectItem key={opt.value} value={opt.value} className="rounded-xl py-2.5 px-4 cursor-pointer focus:bg-foreground focus:text-background transition-colors duration-200">
             <span className="font-medium">{opt.label}</span>

@@ -19,7 +19,8 @@ import {
     Loader2,
     X,
     ArrowLeft,
-    ArrowRight
+    ArrowRight,
+    Layers
 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -35,6 +36,7 @@ const nav = [
     { href: '/admin/users', label: { en: 'Users', ar: 'المستخدمون' }, icon: Users },
     { href: '/admin/products', label: { en: 'Products', ar: 'المنتجات' }, icon: Package },
     { href: '/admin/categories', label: { en: 'Categories', ar: 'التصنيفات' }, icon: LayoutGrid },
+    { href: '/admin/sub-categories', label: { en: 'Sub-categories', ar: 'التصنيفات الفرعية' }, icon: Layers },
     { href: '/admin/orders', label: { en: 'Orders', ar: 'الطلبات' }, icon: ShoppingCart },
     { href: '/admin/offers', label: { en: 'Offers', ar: 'العروض' }, icon: Tag },
 ];
@@ -126,13 +128,13 @@ export default function Sidebar() {
                                 <div className="flex items-center gap-3 relative z-10">
                                     <Icon className={cn(
                                         "h-5 w-5 transition-all duration-300 group-hover:scale-110",
-                                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"
+                                        isActive ? "text-white" : "text-secondary group-hover:font-bold"
                                     )} />
                                     <span>{n.label[isAr ? 'ar' : 'en']}</span>
                                 </div>
 
                                 {isActive && (
-                                    <ChevronRight className="h-4 w-4 text-primary-foreground/70 animate-in slide-in-from-left-2 duration-300 rtl:rotate-180" />
+                                    <div className="absolute inset-y-0 ltr:right-0 rtl:left-0 w-1 bg-secondary rounded-full my-3" />
                                 )}
                             </Link>
                         );
@@ -140,7 +142,7 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-6 mt-auto">
-                    <Button variant="link" asChild className="w-full h-12 mb-5 flex items-center gap-2 text-sm font-medium border-2 border-main rounded-2xl !text-black hover:text-primary transition-all duration-300">
+                    <Button variant="link" asChild className="w-full h-12 mb-5 flex items-center gap-2 text-sm font-medium border-2 border-secondary rounded-2xl text-foreground hover:bg-secondary/5 transition-all duration-300">
                         <Link href="/">
                             <p>back to website</p>
                             <ArrowRight className="h-5 w-5" />
@@ -150,7 +152,7 @@ export default function Sidebar() {
                         onClick={handleLogout}
                         disabled={isLoading}
                         variant="outline"
-                        className="w-full h-12 hover:bg-rose-500 hover:text-white bg-rose-500/10 border-none text-rose-600 rounded-2xl font-bold transition-all duration-300 disabled:opacity-50"
+                        className="w-full h-12 hover:bg-destructive hover:text-destructive-foreground bg-destructive/10 border-none text-destructive rounded-2xl font-bold transition-all duration-300 disabled:opacity-50"
                     >
                         {isLoading ? (
                             <Loader2 className="h-5 w-5 me-3 animate-spin" />

@@ -33,7 +33,7 @@ export default function SpecialOffers({ position }: { position: number }) {
 
     if (position === 1) {
         return (
-            <section className="w-full bg-white">
+            <section className="w-full bg-background">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="overflow-hidden" ref={emblaRef}>
                         <div className="flex gap-4 md:gap-6">
@@ -74,7 +74,7 @@ export default function SpecialOffers({ position }: { position: number }) {
         return (
             <>
                 {offers.map((offer) => (
-                    <section key={offer.id} className="w-full mt-10 pb-12 bg-white">
+                    <section key={offer.id} className="w-full mt-10 pb-12 bg-background">
                         <div className="max-w-8xl mx-auto px-4">
                             <div className="relative w-full aspect-[21/9] md:aspect-[25/7] lg:aspect-[30/7]  overflow-hidden">
                                 {offer.link ? (

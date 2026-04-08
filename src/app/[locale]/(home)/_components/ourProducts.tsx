@@ -32,34 +32,34 @@ export default function OurProducts() {
     }, [activeTab]);
 
     return (
-        <section className="w-full py-16 bg-white" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+        <section className="w-full py-16 bg-background" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
             <div className="max-w-7xl mx-auto"> 
-                <div className="flex items-center justify-start border-b border-gray-100 gap-8 mb-10 pb-1">
+                <div className="flex items-center justify-start border-b border-border gap-8 mb-10 pb-1">
                     <button
                         onClick={() => setActiveTab('all')}
-                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'all' ? 'text-[#1a1a1a]' : 'text-gray-400'}`}
+                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'all' ? 'text-foreground' : 'text-muted-foreground'}`}
                     >
                         {t('AllProducts')}
                         {activeTab === 'all' && (
-                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-[#1a1a1a]" />
+                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-foreground" />
                         )}
                     </button>  
                     <button
                         onClick={() => setActiveTab('featured')}
-                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'featured' ? 'text-[#1a1a1a]' : 'text-gray-400'}`}
+                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'featured' ? 'text-foreground' : 'text-muted-foreground'}`}
                     >
                         {t('FeaturedProducts')}
                         {activeTab === 'featured' && (
-                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-[#1a1a1a]" />
+                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-foreground" />
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab('best_seller')}
-                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'best_seller' ? 'text-[#1a1a1a]' : 'text-gray-400'}`}
+                        className={`text-md cursor-pointer font-bold pb-2 transition-all relative ${activeTab === 'best_seller' ? 'text-foreground' : 'text-muted-foreground'}`}
                     >
                         {t('BestSellers')}
                         {activeTab === 'best_seller' && (
-                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-[#1a1a1a]" />
+                            <div className="absolute -bottom-[2px] right-0 left-0 h-[3px] bg-foreground" />
                         )}
                     </button>
                 </div>
@@ -76,14 +76,14 @@ export default function OurProducts() {
                         ))}
                     </div>
                 ) : (
-                    <div className="py-20 flex flex-col items-center justify-center text-center bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
-                        <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                            <PackageX className="size-12 text-gray-300" />
+                    <div className="py-20 flex flex-col items-center justify-center text-center bg-muted/30 rounded-2xl border-2 border-dashed border-border">
+                        <div className="p-4 bg-background rounded-full shadow-sm mb-4">
+                            <PackageX className="size-12 text-muted-foreground/30" />
                         </div>
-                        <h3 className="font-cairo font-bold text-xl text-gray-600 mb-2">
+                        <h3 className="font-cairo font-bold text-xl text-foreground mb-2">
                             {t('NoProductsFound')}
                         </h3>   
-                        <p className="text-gray-400 text-sm max-w-xs">
+                        <p className="text-muted-foreground text-sm max-w-xs">
                             {t('NoProductsDescription')}
                         </p>
                     </div>
